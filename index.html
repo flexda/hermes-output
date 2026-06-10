@@ -3,60 +3,132 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Oper Hermes Test</title>
+  <title>Oper Hermes Output</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
     body {
-      margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: #0f172a;
+      background: radial-gradient(circle at top left, #0b1220, #000);
       color: #e2e8f0;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 24px;
     }
-
-    .card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 16px;
-      padding: 32px;
-      max-width: 480px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-    }
-
-    h1 {
+    .container { width: 100%; max-width: 780px; }
+    header { text-align: center; margin-bottom: 32px; }
+    header h1 {
+      font-size: clamp(28px, 6vw, 42px);
       margin: 0 0 8px;
-      font-size: 24px;
+      background: linear-gradient(120deg,#f472b6,#a78bfa,#38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-
-    p {
-      margin: 0 0 24px;
-      color: #94a3b8;
-    }
-
-    .badge {
+    header p { margin: 0; color: #94a3b8; }
+    #clock {
       display: inline-block;
-      padding: 6px 12px;
+      margin-top: 12px;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 999px;
-      background: #22c55e1a;
-      color: #4ade80;
-      font-size: 13px;
-      border: 1px solid #22c55e33;
+      font-size: 14px;
+      color: #e2e8f0;
+      font-variant-numeric: tabular-nums;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .step {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 14px 16px;
+      min-width: 120px;
+      text-align: center;
+      backdrop-filter: blur(6px);
+    }
+    .step .label { display: block; font-size: 12px; color: #94a3b8; letter-spacing: 0.12em; text-transform: uppercase; }
+    .step .value { display: block; margin-top: 6px; font-size: 18px; font-weight: 700; }
+    .step.telegram .value { color: #60a5fa; }
+    .step.hermes .value { color: #f472b6; }
+    .step.github .value { color: #93c5fd; }
+    .step.web .value { color: #34d399; }
+    .arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(180deg,#1f2937,#0f172a);
+      color: #e2e8f0;
+      font-size: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+      flex-shrink: 0;
+    }
+    .info {
+      margin-top: 28px;
+      padding: 20px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+    .info h2 { font-size: 16px; margin: 0 0 10px; color: #f8fafc; }
+    .info ul { margin: 0; padding-left: 22px; line-height: 1.8; color: #94a3b8; }
+    footer { margin-top: 24px; text-align: center; color: #475569; font-size: 13px; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Oper Hermes Test</h1>
-    <p>Index page saved to hermes-output and committed to GitHub.</p>
-    <span class="badge">OK</span>
+  <div class="container">
+    <header>
+      <h1>Oper Hermes Output</h1>
+      <p>Hermes 배치 작업 산출물</p>
+      <div id="clock">2026-06-10 11:45:30 KST (수요일)</div>
+    </header>
+
+    <section class="flow" aria-label="pipeline flow">
+      <div class="step telegram">
+        <span class="label">Source</span>
+        <span class="value">Telegram</span>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="step hermes">
+        <span class="label">Agent</span>
+        <span class="value">Hermes</span>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="step github">
+        <span class="label">Storage</span>
+        <span class="value">GitHub</span>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="step web">
+        <span class="label">Delivery</span>
+        <span class="value">Web</span>
+      </div>
+    </section>
+
+    <div class="info">
+      <h2>파이프라인</h2>
+      <ul>
+        <li>사용자가 Telegram에서 지시를 보냄</li>
+        <li>Hermes가 작업을 수행하고 결과를 생성함</li>
+        <li>결과가 이 GitHub 저장소에 커밋·푸시됨</li>
+        <li>브라우저에서 이 페이지로 결과를 확인함</li>
+      </ul>
+    </div>
+
+    <footer>
+      최초 연동 테스트 목적 · Oper Hermes Test
+    </footer>
   </div>
 </body>
 </html>
