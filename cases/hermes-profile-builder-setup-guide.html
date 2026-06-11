@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Agent Profile Builder — 설정 가이드</title>
+<style>
+  :root { --bg:#0b1220; --fg:#e2e8f0; --muted:#94a3b8; --accent:#7aa2f7; --card:#141922; --line:#27303f; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; line-height:1.7; }
+  .wrap { max-width:780px; margin:0 auto; padding:48px 20px 96px; }
+  header h1 { font-size:clamp(26px,5.5vw,40px); line-height:1.25; margin:0 0 10px; }
+  .lede { color:var(--muted); font-size:1.05rem; margin:0 0 8px; }
+  .meta { color:var(--muted); font-size:.85rem; border-bottom:1px solid var(--line); padding-bottom:20px; margin-bottom:28px; }
+  h2 { font-size:1.25rem; margin:36px 0 12px; padding-top:8px; }
+  h2 .num { color:var(--accent); font-variant-numeric:tabular-nums; margin-right:10px; }
+  p { margin:0 0 14px; }
+  ul { margin:0 0 14px; padding-left:20px; }
+  li { margin:6px 0; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:14px 0; }
+  code { background:#1f232b; padding:2px 6px; border-radius:6px; font-size:.85em; }
+  .muted { color:var(--muted); }
+  .tag { display:inline-block; padding:3px 10px; border-radius:999px; background:#1f2937; border:1px solid var(--line); font-size:.8rem; color:var(--muted); margin-right:6px; margin-bottom:6px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin:8px 0 18px; }
+  .tile { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .tile .k { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.12em; }
+  .tile .v { font-size:1.1rem; font-weight:700; margin-top:6px; }
+  a { color:var(--accent); }
+  footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Hermes Agent Profile Builder<br>내 환경 기준 설정 가이드</h1>
+  <p class="lede">대시보드에서 profile을 한 플로우로 구성할 수 있게 된 기능을, 현재 내 Hermes 운영 환경(Telegram · Native · Docker · Vercel)에 맞춰 정리한다.</p>
+  <p class="meta">출처: NousResearch X / docs.hermes-agent.nousresearch.com · 작성: oper-her 정보 가공 파이프라인 · 2026-06-11</p>
+</header>
+
+<h2><span class="num">01</span>Profile Builder가 다루는 항목</h2>
+<div class="card">
+  <ul>
+    <li><b>Identity</b> — name / description (이 에이전트가 누구인지)</li>
+    <li><b>Model / Provider</b> — 메인 모델과 백업/풀링</li>
+    <li><b>Built-in skills</b> — 기본 제공 스킬</li>
+    <li><b>Optional skills</b> — 필요 시 설치하는 스킬 (예: <code style="background:transparent;padding:0;">info-process</code>)</li>
+    <li><b>Skills-hub installs</b> — 허브에서 설치한 스킬</li>
+    <li><b>MCP servers</b> — 외부 MCP 서버 연동</li>
+  </ul>
+</div>
+<p class="muted">원문 기준 흐름: <code style="background:transparent;padding:0;">Identity → Model → Skills → MCP</code> 순서로 구성한다.</p>
+
+<h2><span class="num">02</span>내 현재 구성과 비교</h2>
+<div class="grid">
+  <div class="tile">
+    <div class="k">Profile</div>
+    <div class="v">default (native)</div>
+  </div>
+  <div class="tile">
+    <div class="k">Config</div>
+    <div class="v">~/.hermes/config.yaml</div>
+  </div>
+  <div class="tile">
+    <div class="k">Terminal</div>
+    <div class="v">local (native)</div>
+  </div>
+  <div class="tile">
+    <div class="k">기존 Docker</div>
+    <div class="v">보존, 별도 컨테이너</div>
+  </div>
+</div>
+<p>현재 나는 <b>native(default) + Docker 보존</b>으로 이원화돼 있다. Profile Builder는 보통 대시보드와 연동되므로, Web UI와 내 CLI 운영을 어떻게 연결할지 우선 판단해야 한다.</p>
+
+<h2><span class="num">03</span>설정 가이드 (내 환경 기준)</h2>
+
+<h2><span class="num">03-1</span>Identity</h2>
+<div class="card">
+  <ul>
+    <li>name: <b>Oper Hermes</b> (현재 Telegram·Discord에서 쓰는 identity)</li>
+    <li>description: <b>Ops automation + 정보 가공 파이프라인</b></li>
+    <li>유지 원칙: 공개 게시물용 identity와 내부 ops용 identity를 분리하지 말고, <b>한 프로필 안에서 역할만 context로 구분</b>한다. 이유는 profile 단위 isolation이 운영 복잡도를 올리기 때문.</li>
+  </ul>
+</div>
+
+<h2><span class="num">03-2</span>Model / Provider</h2>
+<div class="card">
+  <ul>
+    <li>현재 OpenRouter가 인증돼 있고, <code style="background:transparent;padding:0;">model.max_tokens=8192</code>로 세팅돼 있다.</li>
+    <li>Profile Builder에서 교체 가능한 부분:
+      <ul>
+        <li>메인 모델을 상황별로 분리할지 여부 (예: 정책 분석용 vs 실시간 ops)</li>
+        <li>현재는 default 하나로 쓰고 있으니, 나중에 profile을 나누고 싶을 때만 별도 profile 생성.</li>
+      </ul>
+    </li>
+    <li>지금 단계에서 우선할 것: UI에서 기존 <code style="background:transparent;padding:0;">OPENROUTER_API_KEY</code>가 정상 노출되는지 확인.</li>
+  </ul>
+</div>
+
+<h2><span class="num">03-3</span>Skills</h2>
+<div class="card">
+  <ul>
+    <li><b>현재 쓰는 스킬</b>: <code style="background:transparent;padding:0;">info-process</code></li>
+    <li><b>대시보드에서 확인할 것</b>:
+      <ul>
+        <li>built-in skills에 기본 포함되는 항목</li>
+        <li>optional/hub installs에 <code style="background:transparent;padding:0;">info-process</code>가 정상 노출되는지</li>
+        <li>skills-hub search/install 흐름이 내 현재 <code style="background:transparent;padding:0;">~/.hermes/skills/</code> 구조와 호환되는지</li>
+      </ul>
+    </li>
+    <li>설정 팁: 스킬은 profile 단위로 관리된다. 나중에 profile을 2개(default + 공유용)로 나눌 때, skills 목록만 복붙해서 쓰면 된다.</li>
+  </ul>
+</div>
+
+<h2><span class="num">03-4</span>MCP servers</h2>
+<div class="card">
+  <ul>
+    <li>현재 Docker Hermes에 <b>MCP 설정이 있는지</b> 확인해야 한다. 있다면 대시보드에서 복붙, 없다면 새로 추가.</li>
+    <li>MCP server를 추가할 수 있게 되면, 내 <b>output 파이프라인(GitHub → Vercel)</b>과 연결할 수 있는지가 우선 판단 기준이다.</li>
+    <li>지금 단계에서 추천:
+      <ul>
+        <li>기존 MCP 구성이 있으면 대시보드로 이전.</li>
+        <li>없으면 output 파이프라인에 필요한 MCP가 있는지 확인 후 추가.</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<h2><span class="num">04</span>운영 규칙으로 정리</h2>
+<div class="card">
+  <ul>
+    <li><b>Profile 단위 분리 기준</b>: identity/model/skills 조합이 현저히 다를 때만 새 profile을 만든다. 지금은 <code style="background:transparent;padding:0;">default</code> 하나로 유지.</li>
+    <li><b>변경 후 검증 순서</b>:
+      <ol>
+        <li>Profile Builder에서 Save</li>
+        <li>CLI에서 <code style="background:transparent;padding:0;">hermes profile list</code>로 반영 확인</li>
+        <li>Telegram에서 기본 질문 1개로 동작 확인</li>
+        <li>문제 없으면 commit</li>
+      </ol>
+    </li>
+    <li><b>보안</b>: 이 가이드에는 .env, 토큰 값을 넣지 않는다. 대시보드에서 credential을 입력하는 부분은 별도로 관리.</li>
+  </ul>
+</div>
+
+<h2><span class="num">05</span>배움 포인트</h2>
+<p>Profile Builder는 Hermes를 <b>"어떤 단위로 나눠 운영하는지"</b> 보여준다. 내 경우:</p>
+<ul>
+  <li><b>profile = 역할 단위</b>로 쓰는 게 맞는지, 아니면 <b>profile = 환경 단위</b>(native/docker 분리)로 써야 하는지 경험적으로 확인할 수 있다.</li>
+  <li>skills-hub가 정상 동작하면, 내 <code style="background:transparent;padding:0;">info-process</code> 스킬도 hub에 publish할지 고려해볼 수 있다.</li>
+</ul>
+
+<h2><span class="num">06</span>다음 행동</h2>
+<div class="card">
+  <ol>
+    <li>대시보드의 Profile Builder 화면을 열어서 항목이 위와 같이 노출되는지 확인.</li>
+    <li>세부 항목 값을 기존 <code style="background:transparent;padding:0;">config.yaml</code>과 대조.</li>
+    <li>차이가 있으면 이 가이드를 업데이트하거나, 설정을 가이드에 맞춰 정리.</li>
+    <li>GitHub(<code style="background:transparent;padding:0;">flexda/hermes-output</code>)에 이 가이드를 반영.</li>
+  </ol>
+</div>
+
+<footer>
+  Hermes Agent Profile Builder 설정 가이드 · oper-her · 2026-06-11 · 
+  <a href="../index.html">Oper Hermes Output</a>
+</footer>
+</div>
+</body>
+</html>
