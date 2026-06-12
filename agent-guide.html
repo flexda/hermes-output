@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agents: 개념부터 노코드 구축까지</title>
+<style>
+  :root {
+    --bg: #f6f5e8;
+    --bg-soft: #fbfaf2;
+    --ink: #2a2a22;
+    --muted: #6b6b5a;
+    --accent: #a8a262;
+    --line: #e6e4d2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  header { margin-bottom: 32px; }
+  h1 { font-size: 28px; margin: 0 0 8px; letter-spacing: -0.3px; }
+  .sub { color: var(--muted); font-size: 14px; }
+  .quote {
+    background: var(--bg-soft);
+    border-left: 3px solid var(--accent);
+    padding: 18px 20px;
+    margin: 24px 0;
+    border-radius: 0 10px 10px 0;
+    font-size: 16px;
+  }
+  h2 { font-size: 18px; margin: 32px 0 12px; }
+  p { margin: 10px 0; }
+  ul { padding-left: 22px; margin: 10px 0; }
+  li { margin: 6px 0; }
+  .card {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px;
+    margin: 14px 0;
+  }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .badge {
+    display: inline-block;
+    background: #efeccd;
+    color: #5c5c36;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .tag { color: var(--accent); font-weight: 600; }
+  .muted { color: var(--muted); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } h1 { font-size: 22px; } }
+  a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>AI Agents: 개념부터 노코드 구축까지</h1>
+    <div class="sub">출처: Anatoli Kopadze (@AnatoliKopadze), 2026-06-08</div>
+  </header>
+
+  <section>
+    <div class="quote">
+      Everyone is talking about AI agents. But if you ask most people what an agent actually is, you get a vague answer about 'AI that does things autonomously.' The real picture is more useful than that. <strong>Agents are not a category. They are a spectrum.</strong>
+    </div>
+  </section>
+
+  <section>
+    <h2>Agent vs 일반 채팅</h2>
+    <p>질문 한 번에 답변을 받는 것은 <span class="muted">채팅</span>입니다. 토픽 탐색, 초안 작성, 파일 저장까지 사용자 개입 없이 끝까지 수행하면 <span class="tag">Agent</span> 입니다.</p>
+    <div class="quote">
+      The difference is not the model. It is the structure around it.
+    </div>
+  </section>
+
+  <section>
+    <h2>Agent의 3가지 필수 구성 요소</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="tag">1. Self-directed tools</div>
+        <p class="muted">검색, 파일 시스템, 코드 실행, 외부 API 등 스스로 도구를 선택해 사용</p>
+      </div>
+      <div class="card">
+        <div class="tag">2. Persistent memory</div>
+        <p class="muted">세션 간 기억 유지. 한 번의 대화로 끝나지 않도록 상태 저장</p>
+      </div>
+      <div class="card">
+        <div class="tag">3. Autonomous loop</div>
+        <p class="muted">목표 완료까지 자동 실행. 한 번의 응답으로 멈추지 않는 실행 루프</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>자율성 스펙트럼</h2>
+    <div class="two-col">
+      <div class="card">
+        <span class="badge">Lv.1</span>Basic Chat
+        <p class="muted">일회성 질의응답, 도구 없음, 진행 목표 없음</p>
+      </div>
+      <div class="card">
+        <span class="badge">Lv.2</span>Tool-Enabled LLM
+        <p class="muted">도구 사용을 스스로 판단, 단계별 지시 없이 검색·생성 수행</p>
+      </div>
+      <div class="card">
+        <span class="badge">Lv.3</span>Multi-Step Workflow
+        <p class="muted">상위 목표를 단계로 분해하고 검증하며 최종 결과물 산출</p>
+      </div>
+      <div class="card">
+        <span class="badge">Lv.4</span>Fully Autonomous
+        <p class="muted">스케줄 실행, 입력 감시, 외부 서비스 호출, 사람 개입 없이 완료</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>5가지 구축 가능한 Agent 유형</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="tag">Research Agent</div>
+        <p class="muted">다중 소스 리서치로 핵심 인사이트를 구조화된 요약으로 전달</p>
+      </div>
+      <div class="card">
+        <div class="tag">Writing Agent</div>
+        <p class="muted">사용자 톤·형식·대상에 맞는 콘텐츠 초안부터 수정까지 자동화</p>
+      </div>
+      <div class="card">
+        <div class="tag">Code Agent</div>
+        <p class="muted">기능 설명을 받아 코드 작성·실행·디버깅·반복을 자율 수행</p>
+      </div>
+      <div class="card">
+        <div class="tag">Business Agent</div>
+        <p class="muted">이메일 초안, 고객 요청 처리, 리드 검증, 리포트 자동 생성</p>
+      </div>
+      <div class="card">
+        <div class="tag">Personal Agent</div>
+        <p class="muted">일정 관리, 태스크 정리, Daily briefing, 수동 기획 업무 대체</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>노코드 구축 가이드 요약</h2>
+    <p class="muted">Telegram Bot + Claude Code 기준, 구축 시간 약 10~20분</p>
+    <ul>
+      <li><strong>필요 조건:</strong> Claude API Key, Telegram Bot Token, Linux VPS (1vCPU/1GB RAM)</li>
+      <li><strong>설치:</strong> <code>npm i -g @anthropic-ai/claude-code</code></li>
+      <li><strong>모델 추천:</strong> Sonnet 4.6 (일상용), Haiku 4.5 (저비용), Opus 4.8 (고난도 분석)</li>
+      <li><strong>구성 요소:</strong> 봇 성격 정의 시스템 프롬프트, 백그라운드 실행, 세션 간 기억, 웹 검색, 노트 저장, 계정 제한, 비용 추적, 스케줄러</li>
+    </ul>
+    <p class="muted">구체적인 템플릿은 원문 노트의 프롬프트 블록을 참고하세요.</p>
+  </section>
+
+  <footer>
+    원문: https://x.com/AnatoliKopadze/status/2063985608381362576<br>
+    자동 정리 · 저작권은 원저자에게 있습니다
+  </footer>
+</div>
+</body>
+</html>
