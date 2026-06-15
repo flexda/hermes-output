@@ -2,6 +2,8 @@
 
 > 출처: "How to get to production faster with Claude Managed Agents" — Claude 채널 (2026.05.21)
 > 발표: Michael & Harrison (Anthropic MTS)
+> YouTube: https://www.youtube.com/watch?v=zenIB7XLZxQ
+> X 원문: https://fixupx.com/rileywestreel/status/2066140224053264611
 
 ---
 
@@ -34,19 +36,19 @@
 
 ## 본론: 핵심 기능
 
-### 🤖 멀티 에이전트 오케스트레이션
+### 멀티 에이전트 오케스트레이션
 Claude가 다른 Claude 스레드를 생성해 작업 위임
 
-### ✅ Outcomes
-평가 루브릭 정의 → 스스로 채점 → 만족할 때까지 반복
+### Outcomes
+평가 루브릭 정의 -> 스스로 채점 -> 만족할 때까지 반복
 
-### 💭 Dreaming (연구 프리뷰)
-수천 개 세션을 한번에 분석 → 메모리 자동 생성·편집
+### Dreaming (연구 프리뷰)
+수천 개 세션을 한번에 분석 -> 메모리 자동 생성·편집
 
-### 🔥 Self-Hosted Sandboxes (신규)
+### Self-Hosted Sandboxes (신규)
 자체 VPC 내에서 샌드박스 운영, 네트워크/감사 완전 통제
 
-### 🔥 MCP Tunnels (연구 프리뷰)
+### MCP Tunnels (연구 프리뷰)
 비공개 MCP 서버를 인터넷 노출 없이 안전하게 연결
 
 ---
@@ -55,7 +57,7 @@ Claude가 다른 Claude 스레드를 생성해 작업 위임
 
 | 파트너 | 포지션 |
 |---|---|
-| **Vercel** | Fluid Compute — 전체 VM, 빌드/샌드박스/함수 동일 기반 |
-| **Modal** | 대규모 확장 — 수십만 개 샌드박스를 몇 분 내, GPU 지원 |
-| **Daytona** | OS/스펙 다양화 — 일시정지/재개/포크 지원 |
-| **Cloudflare** | microVM + Isolates — 경량, 서브밀리세컨드 기동 |
+| **Vercel** | Fluid Compute - 전체 VM, 빌드/샌드박스/함수 동일 기반 |
+| **Modal** | 대규모 확장 - 수십만 개 샌드박스를 몇 분 내, GPU 지원 |
+| **Daytona** | OS/스펙 다양화 - 일시정지/재개/포크 지원 |
+| **Cloudflare** | microVM + Isolates - 경량, 서브밀리세컨드 기동 |
