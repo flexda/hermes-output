@@ -265,14 +265,26 @@
     }
 
     @media (max-width: 960px) {
-      .layout { grid-template-columns: 1fr; }
-      .sidebar { position: relative; top: 0; }
+      .layout { grid-template-columns: 1fr; gap: 16px; }
+      .sidebar {
+        position: relative;
+        top: 0;
+        padding: 16px;
+      }
+      .content { padding: 24px; }
     }
     @media (max-width: 640px) {
-      body { padding: 16px; }
-      .content { padding: 20px; }
+      body { padding: 12px; }
+      .content { padding: 18px; }
       .grid-2 { grid-template-columns: 1fr; }
+      .sidebar ol { padding-left: 18px; }
+      .sidebar, .content { border-radius: 18px; }
+      header h1 { font-size: clamp(28px, 10vw, 36px); }
       header p { font-size: 15px; }
+      h2 { font-size: 21px; }
+      h3 { font-size: 16px; }
+      .lead, .card, .quote, .callout { padding-left: 16px; padding-right: 16px; }
+      table { min-width: 680px; }
     }
   </style>
 </head>

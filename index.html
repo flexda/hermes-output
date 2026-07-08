@@ -7,7 +7,6 @@
   <style>
     :root {
       --bg: #f5f7fb;
-      --bg-accent: rgba(255, 255, 255, 0.72);
       --surface: rgba(255, 255, 255, 0.9);
       --surface-strong: rgba(255, 255, 255, 0.98);
       --border: rgba(148, 163, 184, 0.24);
@@ -50,128 +49,110 @@
       mask-image: linear-gradient(180deg, rgba(0,0,0,0.18), transparent 78%);
     }
 
-    .container { width: 100%; max-width: 860px; position: relative; z-index: 1; }
-    header { text-align: center; margin-bottom: 32px; }
+    .container { width: 100%; max-width: 920px; position: relative; z-index: 1; }
+    header { text-align: center; margin-bottom: 24px; }
     header h1 {
       font-size: clamp(30px, 6vw, 46px);
-      margin: 0 0 10px;
+      margin: 0;
       letter-spacing: -0.03em;
       color: var(--text);
     }
-    header p { margin: 0; color: var(--muted); font-size: 15px; }
-    #clock {
+
+    .featured {
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248, 250, 252, 0.96));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .featured-kicker {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-top: 14px;
-      padding: 10px 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      font-size: 14px;
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(12px);
-    }
-    #clock::before {
-      content: "⏱";
-      font-size: 13px;
-      opacity: 0.8;
-    }
-    .flow {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-    }
-    .step {
-      background: var(--surface-strong);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 16px 18px;
-      min-width: 132px;
-      text-align: center;
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(10px);
-      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
-    }
-    .step:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow);
-      border-color: rgba(79, 70, 229, 0.24);
-    }
-    .step .label {
-      display: block;
-      font-size: 11px;
-      color: var(--soft);
-      letter-spacing: 0.14em;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
     }
-    .step .value { display: block; margin-top: 8px; font-size: 18px; font-weight: 800; color: var(--text); }
-    .step.telegram {
-      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(239, 246, 255, 0.96));
+    .featured h2 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
     }
-    .step.telegram .value { color: #2563eb; }
-    .step.hermes {
-      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250, 245, 255, 0.96));
+    .featured p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
     }
-    .step.hermes .value { color: #7c3aed; }
-    .step.github {
-      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248, 250, 252, 0.96));
-    }
-    .step.github .value { color: #0f172a; }
-    .step.web {
-      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(240, 253, 244, 0.96));
-    }
-    .step.web .value { color: #16a34a; }
-    .arrow {
-      display: flex;
+    .featured a {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: linear-gradient(180deg, #ffffff, #e2e8f0);
-      color: var(--muted);
-      font-size: 16px;
-      border: 1px solid var(--border);
-      flex-shrink: 0;
-      box-shadow: var(--shadow-soft);
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 12px 24px rgba(79, 70, 229, 0.18);
+      font-weight: 700;
+      white-space: nowrap;
     }
-    .info {
-      margin-top: 28px;
-      padding: 22px;
-      border-radius: 22px;
+    .featured a:hover { filter: brightness(1.02); }
+
+    .section {
       background: var(--surface);
       border: 1px solid var(--border);
+      border-radius: 22px;
       box-shadow: var(--shadow-soft);
       backdrop-filter: blur(12px);
+      padding: 22px;
     }
-    .info h2 {
-      font-size: 16px;
-      margin: 0 0 12px;
+    .section h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
       color: var(--text);
       letter-spacing: -0.01em;
     }
-    .info ul {
+    .case-list {
       margin: 0;
       padding-left: 22px;
       line-height: 1.8;
       color: var(--muted);
     }
-    .info a {
+    .case-list li { margin-bottom: 8px; }
+    .case-list a {
       color: var(--accent);
       text-decoration: none;
     }
-    .info a:hover { text-decoration: underline; }
+    .case-list a:hover { text-decoration: underline; }
+
     footer {
       margin-top: 24px;
       text-align: center;
       color: var(--soft);
       font-size: 13px;
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 16px; }
+      .featured {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 18px;
+      }
+      .featured h2 { font-size: 21px; }
+      .featured a { width: 100%; }
+      .section { padding: 18px; }
     }
   </style>
 </head>
@@ -179,53 +160,31 @@
   <div class="container">
     <header>
       <h1>Oper Hermes Output</h1>
-      <p>Hermes 배치 작업 산출물</p>
-      <div id="clock">2026-06-10 11:45:30 KST (수요일)</div>
     </header>
 
-    <section class="flow" aria-label="pipeline flow">
-      <div class="step telegram">
-        <span class="label">Source</span>
-        <span class="value">Telegram</span>
+    <section class="featured" aria-label="대표 카드">
+      <div>
+        <div class="featured-kicker">Featured</div>
+        <h2>Getting started with loops</h2>
+        <p>
+          Claude Code 팀의 loops 정의와 turn-based, goal-based, time-based, proactive 루프를
+          구조 그대로 학습할 수 있게 정리한 대표 페이지입니다.
+        </p>
       </div>
-      <div class="arrow" aria-hidden="true">→</div>
-      <div class="step hermes">
-        <span class="label">Agent</span>
-        <span class="value">Hermes</span>
-      </div>
-      <div class="arrow" aria-hidden="true">→</div>
-      <div class="step github">
-        <span class="label">Storage</span>
-        <span class="value">GitHub</span>
-      </div>
-      <div class="arrow" aria-hidden="true">→</div>
-      <div class="step web">
-        <span class="label">Delivery</span>
-        <span class="value">Web</span>
-      </div>
+      <a href="docs/claude-loops-guide.html">대표 페이지 보기</a>
     </section>
 
-    <div class="info">
-      <h2>파이프라인</h2>
-      <ul>
-        <li>사용자가 Telegram에서 지시를 보냄</li>
-        <li>Hermes가 작업을 수행하고 결과를 생성함</li>
-        <li>결과가 이 GitHub 저장소에 커밋·푸시됨</li>
-        <li>브라우저에서 이 페이지로 결과를 확인함</li>
-      </ul>
-    </div>
-
-    <div class="info">
-      <h2>사례</h2>
-      <ul>
-        <li><a href="cases/info-process.html" style="color:#7aa2f7;">정보 성질 분석으로 활용 방향을 제안받는 에이전트</a></li>
-        <li><a href="cases/hermes-profile-builder-setup-guide.html" style="color:#7aa2f7;">Hermes Agent Profile Builder — 내 환경 기준 설정 가이드</a></li>
-        <li><a href="agent-guide.html" style="color:#7aa2f7;">AI Agents: 개념부터 노코드 구축까지</a></li>
-        <li><a href="docs/claude-loops-guide.html" style="color:#7aa2f7;">Getting started with loops — Claude Code 루프 가이드</a></li>
-        <li><a href="docs/loop-engineering-guide.html" style="color:#7aa2f7;">Loop Engineer 가이드 (2026)</a></li>
-        <li><a href="docs/token-router-guide.html" style="color:#7aa2f7;">token-router — 로컬 라우터로 AI 토큰 비용 99% 절감</a></li>
-      </ul>
-    </div>
+    <section class="section" aria-label="사례 목록">
+      <h2>사례 링크</h2>
+      <ol class="case-list">
+        <li><a href="docs/claude-loops-guide.html">Getting started with loops — Claude Code 루프 가이드</a></li>
+        <li><a href="docs/token-router-guide.html">token-router — 로컬 라우터로 AI 토큰 비용 99% 절감</a></li>
+        <li><a href="docs/loop-engineering-guide.html">Loop Engineer 가이드 (2026)</a></li>
+        <li><a href="agent-guide.html">AI Agents: 개념부터 노코드 구축까지</a></li>
+        <li><a href="cases/hermes-profile-builder-setup-guide.html">Hermes Agent Profile Builder — 내 환경 기준 설정 가이드</a></li>
+        <li><a href="cases/info-process.html">정보 성질 분석으로 활용 방향을 제안받는 에이전트</a></li>
+      </ol>
+    </section>
 
     <footer>
       최초 연동 테스트 목적 · Oper Hermes Test
