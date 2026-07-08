@@ -287,8 +287,37 @@
       .content { padding: 16px; }
       .layout { gap: 14px; }
       .grid-2 { grid-template-columns: 1fr; gap: 12px; }
-      .sidebar { display: none; }
-      .sidebar ol { padding-left: 18px; }
+      .sidebar {
+        display: block;
+        padding: 14px;
+      }
+      .sidebar h2 {
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+      .sidebar ol {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 0 0 4px;
+        margin: 0;
+        list-style: none;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .sidebar ol::-webkit-scrollbar { display: none; }
+      .sidebar li { margin: 0; flex: 0 0 auto; }
+      .sidebar a {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        background: var(--surface-strong);
+        font-size: 12px;
+        line-height: 1.2;
+        white-space: nowrap;
+      }
       .sidebar, .content { border-radius: 18px; }
       section { margin-bottom: 26px; }
       header h1 { font-size: clamp(28px, 10vw, 36px); }
