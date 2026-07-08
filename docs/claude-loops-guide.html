@@ -239,6 +239,9 @@
       box-shadow: var(--shadow-soft);
       font-size: 14px;
       line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
     }
     code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -246,6 +249,8 @@
       padding: 2px 6px;
       border-radius: 6px;
       color: #1e293b;
+      word-break: break-word;
+      overflow-wrap: anywhere;
     }
 
     .callout {
@@ -282,7 +287,7 @@
       .content { padding: 16px; }
       .layout { gap: 14px; }
       .grid-2 { grid-template-columns: 1fr; gap: 12px; }
-      .sidebar { padding: 14px; }
+      .sidebar { display: none; }
       .sidebar ol { padding-left: 18px; }
       .sidebar, .content { border-radius: 18px; }
       section { margin-bottom: 26px; }
