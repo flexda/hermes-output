@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MengTo/Skills — Agent Skills Reference</title>
+<meta name="description" content="MengTo/Skills 저장소(AI 코딩 에이전트용 Agent Skills 모음집) 한 장 요약 — 철학, 폴더 구조, SKILL.md 형식, 카테고리, 사용법.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #24292f;
+    --secondary: #57606a;
+    --secondary-2: #3a4149;
+    --muted: #8b93a1;
+    --hairline: #e7eaef;
+    --hairline-2: #eceff2;
+    --hairline-3: #d0d7de;
+    --surface: #f6f8fa;
+    --surface-2: #f3f4f6;
+    --code-bg: #0d1117;
+    --code-fg: #c9d1d9;
+    --code-comment: #8b949e;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text);
+    background: #eef1f5;
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 760px;
+    margin: 40px auto;
+    background: #ffffff;
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    box-shadow: 0 12px 40px rgba(15, 23, 42, 0.06);
+    padding: 64px 72px;
+  }
+  code, .mono { font-family: 'JetBrains Mono', monospace; }
+  .doc-head {
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted);
+    border-bottom: 1px solid var(--hairline); padding-bottom: 8px; margin-bottom: 24px;
+  }
+  .meta-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+  .file-chip {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6e7781;
+    background: var(--surface-2); padding: 3px 8px; border-radius: 4px;
+  }
+  .license-tag { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+  h1 {
+    font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700;
+    margin: 6px 0 2px; letter-spacing: -0.5px;
+  }
+  .lead { font-size: 15px; color: var(--secondary); margin: 0 0 28px; }
+  h2 {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
+    border-top: 1px solid var(--hairline); padding-top: 20px; margin: 0 0 14px;
+  }
+  p { margin: 0 0 12px; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+  .card { background: var(--surface); border: 1px solid var(--hairline); border-radius: 6px; padding: 14px 16px; }
+  .card .n { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .card .t { font-weight: 600; margin-bottom: 2px; }
+  .card .d { font-size: 13.5px; color: var(--secondary); }
+  pre {
+    background: var(--code-bg); color: var(--code-fg); border-radius: 6px;
+    padding: 16px 18px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    line-height: 1.7; overflow: auto; margin: 0 0 24px;
+  }
+  pre .cmt { color: var(--code-comment); }
+  pre .kw { color: #79c0ff; }
+  pre .str { color: #a5d6ff; }
+  .sub-label { font-weight: 600; margin-bottom: 8px; }
+  ul, ol { margin: 0 0 24px; padding-left: 20px; }
+  li { margin-bottom: 4px; }
+  code.chip { background: var(--surface-2); padding: 1px 5px; border-radius: 3px; }
+  .cat { border: 1px solid var(--hairline); border-radius: 6px; margin-bottom: 14px; overflow: hidden; }
+  .cat-head {
+    background: var(--surface); padding: 10px 16px; display: flex;
+    justify-content: space-between; align-items: center; border-bottom: 1px solid var(--hairline);
+  }
+  .cat-name { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 13.5px; }
+  .cat-count { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted); }
+  .cat-body { padding: 12px 16px; font-size: 13.5px; color: var(--secondary-2); }
+  .cat-body p { margin: 0; }
+  .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 16px; }
+  thead tr { border-bottom: 1px solid var(--hairline-3); }
+  th { text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  tbody tr { border-bottom: 1px solid var(--hairline-2); }
+  tbody tr:last-child { border-bottom: none; }
+  td.key { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+  .callout {
+    background: var(--surface); border-left: 3px solid var(--secondary);
+    border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 13px;
+    color: var(--secondary-2); margin-bottom: 24px;
+  }
+  .callout strong.eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--muted);
+  }
+  .callout code.chip { background: #fff; }
+  .doc-foot {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #c1c6cd;
+    text-align: center; padding-top: 28px; margin-top: 28px; border-top: 1px solid var(--hairline);
+  }
+  section { margin-bottom: 4px; }
+  @media (max-width: 640px) {
+    .page { margin: 0; border: none; border-radius: 0; box-shadow: none; padding: 28px 20px; }
+    .cards, .cat-grid { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: #fff; }
+    .page { margin: 0; max-width: none; border: none; box-shadow: none; padding: 0.85in; }
+    pre, .cat, .card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+
+  <div class="doc-head">
+    <span>MengTo/Skills</span>
+    <span>Agent Skills Reference</span>
+  </div>
+
+  <div class="meta-row">
+    <span class="file-chip">README.md</span>
+    <span class="license-tag">MIT License</span>
+  </div>
+  <h1>MengTo/Skills</h1>
+  <p class="lead">디자이너이자 개발자 Meng To(Design+Code 창립자)가 만든 <strong>에이전트 스킬(Agent Skills) 모음집</strong> — AI 코딩 에이전트가 UI/프론트엔드/애니메이션/자동화 작업을 할 때 불러와 그대로 따라 하는 재사용 가능한 작업 절차서 묶음.</p>
+
+  <section>
+    <h2>01 · 이게 뭔가</h2>
+    <p>일회성 채팅 답변 대신 <strong>버전 관리되는 파일 형태의 작업 지침</strong>을 만들어 두는 것이 목적이다. 저장소 철학은 4가지로 요약된다.</p>
+    <div class="cards">
+      <div class="card"><div class="n">1</div><div class="t">프롬프트는 자산이다</div><div class="d">한 번 잘 나온 프롬프트는 파일로 저장하고 버전 관리한다.</div></div>
+      <div class="card"><div class="n">2</div><div class="t">스펙이 감(vibe)을 이긴다</div><div class="d">명확한 제약과 위계가 일관된 결과를 만든다.</div></div>
+      <div class="card"><div class="n">3</div><div class="t">레퍼런스가 문단을 이긴다</div><div class="d">스크린샷·예시가 폰트·간격·색·리듬을 그대로 전달한다.</div></div>
+      <div class="card"><div class="n">4</div><div class="t">스킬은 운영 절차서다</div><div class="d">언제 쓸지, 먼저 뭘 할지, 기본값과 피할 실수를 알려준다.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>02 · 저장소 구조</h2>
+    <p>현재 스냅샷 기준 <strong>총 95개 스킬</strong>이 4개 카테고리로 나뉘어 있다.</p>
+    <pre>Skills/
+  README.md            <span class="cmt"># 저장소 전체 소개 및 스킬 목록</span>
+  CLAUDE.md             <span class="cmt"># Claude Code용 저장소 작업 가이드</span>
+  LICENSE                <span class="cmt"># MIT</span>
+  assets/
+  agent-skills/          <span class="cmt"># 실제 스킬들이 들어있는 곳</span>
+    codex/               <span class="cmt"># 운영/워크플로 스킬 (18개)</span>
+    ui/                  <span class="cmt"># UI 디자인 프롬프팅 스킬 (13개)</span>
+    web-design/          <span class="cmt"># 웹 디자인/구현 스킬 (62개)</span>
+    media/               <span class="cmt"># 이미지 소싱 스킬 (2개)</span></pre>
+
+    <div class="sub-label">폴더 계약(folder contract)</div>
+    <p>각 스킬은 아래 규칙을 따르는 독립 폴더다.</p>
+    <pre>agent-skills/&lt;카테고리&gt;/&lt;스킬-이름&gt;/
+  SKILL.md            <span class="cmt"># 필수: frontmatter + 작업 절차</span>
+  REFERENCES.md       <span class="cmt"># 선택: 링크만 모음</span>
+  ARTICLE.md          <span class="cmt"># 선택: 긴 설명/배경</span>
+  assets/             <span class="cmt"># 선택: 이미지, 템플릿, 예시</span>
+  scripts/            <span class="cmt"># 선택: 보조 스크립트</span></pre>
+    <ul>
+      <li><code class="chip mono">SKILL.md</code>가 에이전트가 실제로 읽고 따르는 본체다. 간결하고 실행 가능하게 유지한다.</li>
+      <li><code class="chip mono">REFERENCES.md</code>는 링크만 담고, 긴 설명은 넣지 않는다.</li>
+      <li>스킬은 <strong>절차적(단계·패턴·가드레일)</strong>이어야 하고 백과사전식이면 안 된다.</li>
+      <li>트리거는 명시적으로: "Use when..." 형태가 모호한 설명보다 낫다.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>03 · SKILL.md 파일 형식</h2>
+    <p>각 <code class="chip mono">SKILL.md</code>는 YAML frontmatter로 시작한다.</p>
+    <pre>---
+<span class="kw">name</span>: video-to-superprompt
+<span class="kw">description</span>: <span class="str">Turn a reference video into a super detailed</span>
+  <span class="str">recreation or inspiration prompt. Use when...</span>
+---
+
+<span class="cmt"># Video To Superprompt</span>
+
+<span class="cmt">## Goal</span>
+...무엇을 달성하는 스킬인지...
+
+<span class="cmt">## Workflow</span>
+1. 첫 번째로 할 일
+2. 두 번째로 할 일
+
+<span class="cmt">## Pitfalls / 주의점</span>
+...</pre>
+    <ul>
+      <li><code class="chip mono">name</code> — 스킬 식별자(폴더명과 동일)</li>
+      <li><code class="chip mono">description</code> — <strong>언제 발동할지</strong> 상세히 적는다. 에이전트가 이 문장으로 적용 여부를 판단하므로 트리거 조건이 촘촘히 들어간다.</li>
+      <li>본문 순서: Goal → Workflow(단계별) → 스니펫/명령어 → 함정/가드레일</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>04 · 카테고리별 내용</h2>
+
+    <div class="cat">
+      <div class="cat-head"><span class="cat-name">codex/</span><span class="cat-count">운영·워크플로 · 18개</span></div>
+      <div class="cat-body"><p>반복 가능한 실무 작업을 자동화하는 절차서. 대표: <code class="chip mono">video-to-superprompt</code>(참조 영상→초상세 프롬프트), <code class="chip mono">html-to-interaction-prompts</code>, <code class="chip mono">stitched-full-page-capture</code>, <code class="chip mono">playwright</code>, <code class="chip mono">netlify-deploy</code>, <code class="chip mono">copywriting</code> 외.</p></div>
+    </div>
+
+    <div class="cat">
+      <div class="cat-head"><span class="cat-name">ui/</span><span class="cat-count">UI 디자인 프롬프팅 · 13개</span></div>
+      <div class="cat-body"><p>디자인 관점의 UI 생성/재설계 방법론. 대표: <code class="chip mono">design-first-ui-prompting</code>(목표→포맷→레이아웃→타입→색→제약), <code class="chip mono">frontend-design</code>, <code class="chip mono">minimalist-ui</code>, <code class="chip mono">image-to-code</code>, <code class="chip mono">redesign-existing-projects</code> 외.</p></div>
+    </div>
+
+    <div class="cat">
+      <div class="cat-head"><span class="cat-name">web-design/</span><span class="cat-count">구현 · 62개 (최대)</span></div>
+      <div class="cat-body">
+        <p style="margin:0 0 8px;">실제 랜딩 페이지/모션/3D/스타일을 구현하는 스킬. 하위 그룹:</p>
+        <div class="cat-grid">
+          <div><strong>모션·스크롤</strong> — gsap, marquee-loop, masked-reveal</div>
+          <div><strong>WebGL·3D</strong> — threejs, globe-gl, matterjs</div>
+          <div><strong>CSS 디테일</strong> — beautiful-shadows, progressive-blur</div>
+          <div><strong>레이아웃</strong> — editorial-tech, split-layout-technical</div>
+          <div style="grid-column:1/-1;"><strong>비주얼 무드 프리셋</strong> — clean-minimal-beige-light-mode, dark-glass-clean-layout, orange-clean-paper-saas 등 색/분위기별 20여 개</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat">
+      <div class="cat-head"><span class="cat-name">media/</span><span class="cat-count">이미지 소싱 · 2개</span></div>
+      <div class="cat-body"><p><code class="chip mono">aura-asset-images</code>(스톡풍 디자인/마케팅 이미지), <code class="chip mono">unsplash-asset-images</code>(용도·크롭·비율별 에셋 선택).</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>05 · 사용법 (에이전트별)</h2>
+    <p>포맷은 순수 마크다운 + 폴더 기반이라 어떤 에이전트에서도 쓸 수 있다.</p>
+    <table>
+      <thead>
+        <tr><th style="padding:6px 10px 6px 0;">에이전트</th><th style="padding:6px 0;">사용 방식</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="key" style="padding:8px 10px 8px 0;">Codex</td><td style="padding:8px 0;">작업 전 해당 SKILL.md 로드. 저장소 동작은 AGENTS.md에.</td></tr>
+        <tr><td class="key" style="padding:8px 10px 8px 0;">Claude Code</td><td style="padding:8px 0;">CLAUDE.md에서 참조하거나 <code class="chip mono">~/.claude/skills/</code>로 복사해 정식 스킬로 등록.</td></tr>
+        <tr><td class="key" style="padding:8px 10px 8px 0;">Cursor</td><td style="padding:8px 0;">규칙이나 채팅 컨텍스트를 특정 스킬 폴더로 지정.</td></tr>
+        <tr><td class="key" style="padding:8px 10px 8px 0;">기타</td><td style="padding:8px 0;">가장 좁게 매칭되는 스킬을 먼저 읽고 단계·레퍼런스를 따른다.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      <strong class="eyebrow">대표 워크플로 (플래그십)</strong><br>
+      영상 → <code class="chip mono">video-to-superprompt</code> → HTML 원샷 생성 → <code class="chip mono">html-to-interaction-prompts</code>로 인터랙션 재활용 → <code class="chip mono">stitched-full-page-capture</code>로 전체 페이지 레퍼런스 확보 → <code class="chip mono">daily-ui-inspiration-capture</code>로 루프화.
+    </div>
+  </section>
+
+  <section>
+    <h2>06 · 새 스킬 추가 방법</h2>
+    <ol>
+      <li>폴더 생성: <code class="chip mono">agent-skills/&lt;카테고리&gt;/&lt;스킬-이름&gt;/</code></li>
+      <li><code class="chip mono">SKILL.md</code> 작성: frontmatter(name, description) + 언제 쓸지/워크플로/함정/레시피</li>
+      <li>(선택) <code class="chip mono">REFERENCES.md</code>: 문서 링크만</li>
+      <li>계약 점검: 명확한 트리거 / 구체적 워크플로 / 재사용 스니펫 / 함정·수용 기준 / 비밀정보 없음</li>
+      <li>커밋: 스킬 단위 작은 커밋 — <code class="chip mono">Add &lt;스킬명&gt; skill</code></li>
+    </ol>
+    <p style="font-size:13.5px; color:var(--secondary);">작성 스타일: 훑어보기 쉽고 실용적이고 자신감 있게. 제약과 기본값(지속시간·간격·위계·명령어) 우선. 군더더기 배제. 긴 설명은 ARTICLE.md, 링크는 REFERENCES.md로 분리.</p>
+  </section>
+
+  <section>
+    <h2>07 · 라이선스 및 출처</h2>
+    <table>
+      <tbody>
+        <tr><td class="key" style="padding:8px 10px 8px 0; color:var(--muted); width:140px;">License</td><td style="padding:8px 0;">MIT</td></tr>
+        <tr><td class="key" style="padding:8px 10px 8px 0; color:var(--muted);">GitHub</td><td style="padding:8px 0;"><a href="https://github.com/MengTo/Skills" style="color:#0969da; text-decoration:none;">github.com/MengTo/Skills</a></td></tr>
+        <tr><td class="key" style="padding:8px 10px 8px 0; color:var(--muted);">연관 도구</td><td style="padding:8px 0;">Codex, Claude Design, Aura Build, Lovable, Cursor</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="doc-foot">MengTo/Skills — Agent Skills Reference</div>
+
+</main>
+</body>
+</html>
