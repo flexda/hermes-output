@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Oper Hermes Output</title>
+  <title>저장만 말고 읽으시게나</title>
   <style>
     :root {
       --bg: #f5f7fb;
@@ -52,7 +52,7 @@
     .container { width: 100%; max-width: 920px; position: relative; z-index: 1; }
     header { text-align: center; margin-bottom: 24px; }
     header h1 {
-      font-size: clamp(30px, 6vw, 46px);
+      font-size: clamp(28px, 6vw, 44px);
       margin: 0;
       letter-spacing: -0.03em;
       color: var(--text);
@@ -69,7 +69,7 @@
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 18px;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 18px;
     }
     .featured-kicker {
       display: inline-flex;
@@ -82,6 +82,12 @@
       color: var(--accent);
       margin-bottom: 10px;
     }
+    .featured-kicker::before {
+      content: "";
+      width: 7px; height: 7px; border-radius: 999px;
+      background: var(--accent-3);
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
+    }
     .featured h2 {
       margin: 0 0 10px;
       font-size: 24px;
@@ -93,12 +99,12 @@
       color: var(--muted);
       line-height: 1.75;
     }
-    .featured a {
+    .featured a.cta {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       min-height: 44px;
-      padding: 0 16px;
+      padding: 0 18px;
       border-radius: 999px;
       text-decoration: none;
       color: white;
@@ -107,7 +113,53 @@
       font-weight: 700;
       white-space: nowrap;
     }
-    .featured a:hover { filter: brightness(1.02); }
+    .featured a.cta:hover { filter: brightness(1.02); }
+
+    /* Progress bar */
+    .progress {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+    .progress-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .progress-msg {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .progress-count {
+      font-size: 13px;
+      color: var(--soft);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .progress-track {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .progress-fill.done {
+      background: linear-gradient(90deg, var(--accent-3), #16a34a);
+    }
 
     .section {
       background: var(--surface);
@@ -124,23 +176,72 @@
       letter-spacing: -0.01em;
     }
     .case-list {
+      list-style: none;
       margin: 0;
-      padding-left: 22px;
-      line-height: 1.8;
+      padding: 0;
+      line-height: 1.7;
       color: var(--muted);
     }
-    .case-list li { margin-bottom: 8px; }
+    .case-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    }
+    .case-list li:last-child { border-bottom: none; }
+    .case-list input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      border: 1.5px solid rgba(148, 163, 184, 0.6);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.7);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .case-list input[type="checkbox"]:hover { border-color: var(--accent); }
+    .case-list input[type="checkbox"]:checked {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-color: transparent;
+    }
+    .case-list input[type="checkbox"]:checked::after {
+      content: "";
+      position: absolute;
+      left: 6px; top: 2px;
+      width: 5px; height: 10px;
+      border: solid #fff;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
     .case-list a {
       color: var(--accent);
       text-decoration: none;
     }
     .case-list a:hover { text-decoration: underline; }
+    .case-list li.read a { color: var(--soft); }
+    .case-list li.read .case-text { text-decoration: line-through; text-decoration-color: rgba(100,116,139,0.5); }
+    .case-text { flex: 1; }
 
     footer {
       margin-top: 24px;
       text-align: center;
       color: var(--soft);
       font-size: 13px;
+    }
+
+    /* Confetti canvas */
+    #confetti {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 50;
     }
 
     @media (max-width: 720px) {
@@ -151,46 +252,167 @@
         padding: 18px;
       }
       .featured h2 { font-size: 21px; }
-      .featured a { width: 100%; }
+      .featured a.cta { width: 100%; }
       .section { padding: 18px; }
+      .progress-top { flex-direction: column; gap: 4px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Oper Hermes Output</h1>
+      <h1>저장만 말고 읽으시게나</h1>
     </header>
 
-    <section class="featured" aria-label="대표 카드">
+    <section class="featured" aria-label="New">
       <div>
-        <div class="featured-kicker">Featured</div>
+        <div class="featured-kicker">New</div>
         <h2>Getting started with loops</h2>
         <p>
           Claude Code 팀의 loops 정의와 turn-based, goal-based, time-based, proactive 루프를
           구조 그대로 학습할 수 있게 정리한 대표 페이지입니다.
         </p>
       </div>
-      <a href="docs/claude-loops-guide.html">대표 페이지 보기</a>
+      <a class="cta" href="docs/claude-loops-guide.html">Let's Read</a>
     </section>
 
-    <section class="section" aria-label="사례 목록">
-      <h2>사례 링크</h2>
-      <ol class="case-list">
-        <li><a href="docs/mengto-skills-guide.html">MengTo/Skills — AI 에이전트용 Agent Skills 모음집 한 장 요약</a></li>
-        <li><a href="docs/kaggle-iframe-test.html">Kaggle iframe test — 임베드 동작 확인용</a></li>
-        <li><a href="docs/claude-loops-guide.html">Getting started with loops — Claude Code 루프 가이드</a></li>
-        <li><a href="docs/token-router-guide.html">token-router — 로컬 라우터로 AI 토큰 비용 99% 절감</a></li>
-        <li><a href="docs/loop-engineering-guide.html">Loop Engineer 가이드 (2026)</a></li>
-        <li><a href="agent-guide.html">AI Agents: 개념부터 노코드 구축까지</a></li>
-        <li><a href="cases/hermes-profile-builder-setup-guide.html">Hermes Agent Profile Builder — 내 환경 기준 설정 가이드</a></li>
-        <li><a href="cases/info-process.html">정보 성질 분석으로 활용 방향을 제안받는 에이전트</a></li>
+    <section class="progress" aria-label="Reading progress">
+      <div class="progress-top">
+        <span class="progress-msg" id="progress-msg">쟁여두기만 하고 한 편도 안 읽으셨소</span>
+        <span class="progress-count" id="progress-count">0 / 0편 읽음 (0%)</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Reference">
+      <h2>Reference</h2>
+      <ol class="case-list" id="case-list">
+        <li><input type="checkbox" data-id="mengto-skills" aria-label="읽음 표시" /><span class="case-text"><a href="docs/mengto-skills-guide.html">MengTo/Skills — AI 에이전트용 Agent Skills 모음집 한 장 요약</a></span></li>
+        <li><input type="checkbox" data-id="kaggle-iframe" aria-label="읽음 표시" /><span class="case-text"><a href="docs/kaggle-iframe-test.html">Kaggle iframe test — 임베드 동작 확인용</a></span></li>
+        <li><input type="checkbox" data-id="claude-loops" aria-label="읽음 표시" /><span class="case-text"><a href="docs/claude-loops-guide.html">Getting started with loops — Claude Code 루프 가이드</a></span></li>
+        <li><input type="checkbox" data-id="token-router" aria-label="읽음 표시" /><span class="case-text"><a href="docs/token-router-guide.html">token-router — 로컬 라우터로 AI 토큰 비용 99% 절감</a></span></li>
+        <li><input type="checkbox" data-id="loop-engineering" aria-label="읽음 표시" /><span class="case-text"><a href="docs/loop-engineering-guide.html">Loop Engineer 가이드 (2026)</a></span></li>
+        <li><input type="checkbox" data-id="agent-guide" aria-label="읽음 표시" /><span class="case-text"><a href="agent-guide.html">AI Agents: 개념부터 노코드 구축까지</a></span></li>
+        <li><input type="checkbox" data-id="hermes-profile" aria-label="읽음 표시" /><span class="case-text"><a href="cases/hermes-profile-builder-setup-guide.html">Hermes Agent Profile Builder — 내 환경 기준 설정 가이드</a></span></li>
+        <li><input type="checkbox" data-id="info-process" aria-label="읽음 표시" /><span class="case-text"><a href="cases/info-process.html">정보 성질 분석으로 활용 방향을 제안받는 에이전트</a></span></li>
       </ol>
     </section>
 
     <footer>
-      최초 연동 테스트 목적 · Oper Hermes Test
+      a reading room for saved references
     </footer>
   </div>
+
+  <canvas id="confetti"></canvas>
+
+  <script>
+    (function () {
+      var STORAGE_KEY = "hermes-read-v1";
+      var list = document.getElementById("case-list");
+      var boxes = Array.prototype.slice.call(list.querySelectorAll('input[type="checkbox"]'));
+      var fill = document.getElementById("progress-fill");
+      var msgEl = document.getElementById("progress-msg");
+      var countEl = document.getElementById("progress-count");
+      var total = boxes.length;
+      var wasComplete = false;
+
+      function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+        catch (e) { return {}; }
+      }
+      function saveState(state) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+      }
+
+      function messageFor(read, pct) {
+        if (read === 0) return "쟁여두기만 하고 한 편도 안 읽으셨소";
+        if (pct <= 30) return "오, 드디어 발동이 걸리는구려";
+        if (pct <= 60) return "절반쯤 오셨소. 계속 가시게";
+        if (pct < 100) return "거의 다 왔소, 조금만 더";
+        return "다 읽으셨네. 기특하오";
+      }
+
+      function render(animateConfetti) {
+        var read = boxes.filter(function (b) { return b.checked; }).length;
+        var pct = total ? Math.round((read / total) * 100) : 0;
+        fill.style.width = pct + "%";
+        fill.classList.toggle("done", pct === 100);
+        msgEl.textContent = messageFor(read, pct);
+        countEl.textContent = read + " / " + total + "편 읽음 (" + pct + "%)";
+        boxes.forEach(function (b) {
+          b.closest("li").classList.toggle("read", b.checked);
+        });
+        var complete = read === total && total > 0;
+        if (animateConfetti && complete && !wasComplete) {
+          launchConfetti();
+        }
+        wasComplete = complete;
+      }
+
+      var state = loadState();
+      boxes.forEach(function (b) {
+        var id = b.getAttribute("data-id");
+        if (state[id]) b.checked = true;
+        b.addEventListener("change", function () {
+          var s = loadState();
+          if (b.checked) s[id] = true; else delete s[id];
+          saveState(s);
+          render(true);
+        });
+      });
+      render(false);
+
+      /* Lightweight canvas confetti */
+      function launchConfetti() {
+        var canvas = document.getElementById("confetti");
+        var ctx = canvas.getContext("2d");
+        var W = canvas.width = window.innerWidth;
+        var H = canvas.height = window.innerHeight;
+        var colors = ["#4f46e5", "#0ea5e9", "#22c55e", "#f59e0b", "#ec4899"];
+        var pieces = [];
+        for (var i = 0; i < 140; i++) {
+          pieces.push({
+            x: W / 2 + (Math.random() - 0.5) * 120,
+            y: H / 3,
+            vx: (Math.random() - 0.5) * 12,
+            vy: Math.random() * -14 - 4,
+            size: Math.random() * 7 + 4,
+            color: colors[(Math.random() * colors.length) | 0],
+            rot: Math.random() * Math.PI,
+            vr: (Math.random() - 0.5) * 0.3,
+            life: 0
+          });
+        }
+        var start = null;
+        function frame(ts) {
+          if (!start) start = ts;
+          var elapsed = ts - start;
+          ctx.clearRect(0, 0, W, H);
+          pieces.forEach(function (p) {
+            p.vy += 0.35;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.rot += p.vr;
+            p.life++;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = Math.max(0, 1 - elapsed / 2600);
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+            ctx.restore();
+          });
+          if (elapsed < 2600) {
+            requestAnimationFrame(frame);
+          } else {
+            ctx.clearRect(0, 0, W, H);
+          }
+        }
+        requestAnimationFrame(frame);
+      }
+    })();
+  </script>
 </body>
 </html>
