@@ -18,6 +18,11 @@
       --accent: #4f46e5;
       --accent-2: #0ea5e9;
       --accent-3: #22c55e;
+      /* brand palette (image reference) */
+      --palette-yellow: #f8f1a7;
+      --palette-red: #bf2d2f;
+      --palette-teal: #b7d7d7;
+      --read: #4a8a8a; /* darkened palette teal for read titles */
     }
 
     * { box-sizing: border-box; }
@@ -223,8 +228,7 @@
       text-decoration: none;
     }
     .case-list a:hover { text-decoration: underline; }
-    .case-list li.read a { color: var(--soft); }
-    .case-list li.read .case-text { text-decoration: line-through; text-decoration-color: rgba(100,116,139,0.5); }
+    .case-list li.read a { color: var(--read); font-weight: 600; }
     .case-text { flex: 1; }
 
     footer {
