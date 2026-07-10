@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Field Guide to Fable: Finding Your Unknowns</title>
+  <meta name="description" content="Thariq의 'Finding Your Unknowns' 글을 바탕으로, unknown unknowns를 찾는 실전 워크플로우와 바로 써먹는 프롬프트 예시를 정리한 HTML 가이드." />
+  <style>
+    :root {
+      --bg: #faf7f1;
+      --surface: rgba(255, 255, 255, 0.9);
+      --surface-strong: rgba(255, 255, 255, 0.98);
+      --border: rgba(148, 163, 184, 0.24);
+      --text: #111827;
+      --muted: #4b5563;
+      --soft: #6b7280;
+      --accent: #4338ca;
+      --accent-2: #0f766e;
+      --accent-3: #b45309;
+      --shadow: 0 20px 50px rgba(17, 24, 39, 0.08);
+      --shadow-soft: 0 10px 24px rgba(17, 24, 39, 0.06);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at top left, rgba(67, 56, 202, 0.08), transparent 30%),
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.08), transparent 28%),
+        linear-gradient(180deg, #fffdf9 0%, var(--bg) 100%);
+      padding: 24px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.2)),
+        linear-gradient(90deg, rgba(148,163,184,0.06) 1px, transparent 1px),
+        linear-gradient(rgba(148,163,184,0.06) 1px, transparent 1px);
+      background-size: auto, 48px 48px, 48px 48px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.12), transparent 82%);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .nav-back:hover { color: var(--accent); }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    header h1 {
+      margin: 0;
+      font-size: clamp(32px, 6vw, 52px);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+    header p {
+      margin: 14px auto 0;
+      max-width: 820px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .sidebar,
+    .content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      padding: 18px;
+    }
+    .sidebar h2 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .sidebar ol {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .sidebar a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .sidebar a:hover { color: var(--accent); }
+
+    .content {
+      padding: 28px;
+    }
+
+    section { margin-bottom: 34px; }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      line-height: 1.3;
+    }
+    p, li { color: var(--muted); }
+    ul, ol { padding-left: 22px; }
+    li { margin-bottom: 6px; }
+
+    .lead {
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248, 250, 252, 0.96));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .quote {
+      margin: 16px 0;
+      padding: 18px 20px;
+      border-left: 5px solid var(--accent);
+      background: rgba(67, 56, 202, 0.06);
+      border-radius: 0 16px 16px 0;
+      color: var(--text);
+      font-size: 16px;
+    }
+    .quote small { display: block; margin-top: 8px; color: var(--muted); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .card {
+      background: var(--surface-strong);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+    .card .tag {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .card p { margin: 0; }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      background: var(--surface-strong);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      background: rgba(248, 250, 252, 0.96);
+      color: var(--text);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+    tr:last-child td { border-bottom: 0; }
+    td:first-child { color: var(--text); font-weight: 700; }
+
+    pre {
+      background: #111827;
+      color: #e5e7eb;
+      padding: 18px 20px;
+      border-radius: 16px;
+      overflow: auto;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow-soft);
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: rgba(15, 23, 42, 0.08);
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #1e293b;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .callout {
+      border: 1px solid rgba(180, 83, 9, 0.16);
+      background: rgba(245, 158, 11, 0.08);
+      padding: 18px 20px;
+      border-radius: 18px;
+      color: var(--text);
+    }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .checklist .item {
+      background: var(--surface-strong);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow-soft);
+    }
+    .checklist .item strong { display: block; margin-bottom: 6px; color: var(--text); }
+
+    .source-list a { color: var(--accent); text-decoration: none; }
+    .source-list a:hover { text-decoration: underline; }
+
+    footer {
+      margin: 22px 0 8px;
+      text-align: center;
+      color: var(--soft);
+      font-size: 13px;
+    }
+
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px; }
+      .content { padding: 18px; }
+      .grid-2, .checklist { grid-template-columns: 1fr; }
+      h2 { font-size: 21px; }
+      .lead, .card, .checklist .item, .callout { padding: 16px; }
+      pre { padding: 16px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="nav-back">&larr; Hermes Output</a>
+
+    <header>
+      <div class="eyebrow">
+        <span class="badge">Source: X post + article preview</span>
+        <span class="badge">Practical prompt workflow</span>
+        <span class="badge">Mobile-friendly HTML</span>
+      </div>
+      <h1>A Field Guide to Fable: Finding Your Unknowns</h1>
+      <p>
+        Thariq의 글 핵심을 바탕으로, <strong>unknown unknowns</strong>를 찾고
+        더 나은 프롬프트·계획·검증 흐름으로 바꾸는 실전 가이드입니다.
+        바로 써먹을 수 있도록 예시 프롬프트와 체크리스트까지 포함했습니다.
+      </p>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar" aria-label="목차">
+        <h2>목차</h2>
+        <ol>
+          <li><a href="#why">왜 이 글이 중요한가</a></li>
+          <li><a href="#map">Map vs Territory</a></li>
+          <li><a href="#four">4가지 지식 범주</a></li>
+          <li><a href="#workflow">실전 워크플로우</a></li>
+          <li><a href="#prompts">바로 쓰는 프롬프트 예시</a></li>
+          <li><a href="#example">예시: auth provider 추가</a></li>
+          <li><a href="#checklist">오늘 바로 적용 체크리스트</a></li>
+          <li><a href="#sources">출처</a></li>
+        </ol>
+      </aside>
+
+      <main class="content">
+        <section id="why">
+          <h2>1) 왜 이 글이 중요한가</h2>
+          <div class="lead">
+            <p>
+              이 글의 핵심은 단순합니다. 모델이 똑똑해질수록 문제는 더 이상
+              “모델이 못해서”가 아니라 <strong>내가 무엇을 빠뜨렸는지</strong>에
+              가까워집니다. 그래서 프롬프트를 잘 쓰는 것만으로는 부족하고,
+              <strong>내가 아직 모르는 것</strong>을 먼저 드러내는 과정이 필요합니다.
+            </p>
+            <div class="quote">
+              “The map is not the territory.”
+              <small>프롬프트, skills, context는 ‘지도’이고 실제 코드베이스·제약·의도는 ‘영토’입니다.</small>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <div class="tag">문제가 커지는 이유</div>
+              <p>
+                강한 모델은 애매한 지시도 자신 있게 밀어붙입니다. 그래서 지도에 빈칸이 있으면
+                그 빈칸이 조용히, 빠르게, 크게 번집니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">좋은 대응</div>
+              <p>
+                “정답을 바로 쓰게 하기”보다 “무엇이 부족한지 먼저 찾게 하기”가 더 효과적입니다.
+                즉, unknown unknowns를 먼저 밝히는 루틴이 필요합니다.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="map">
+          <h2>2) Map vs Territory를 실무 언어로 바꾸면</h2>
+          <div class="table-wrap" role="region" aria-label="map territory 표">
+            <table>
+              <thead>
+                <tr>
+                  <th>구분</th>
+                  <th>무엇인가</th>
+                  <th>실무에서 예</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Map</td>
+                  <td>프롬프트, skills, CLAUDE.md, 대화 맥락, 읽어온 파일</td>
+                  <td>“새 결제 플로우를 만들어줘”라는 요청문</td>
+                </tr>
+                <tr>
+                  <td>Territory</td>
+                  <td>실제 코드, 암묵적 규칙, 레거시 제약, 진짜 사용자 의도</td>
+                  <td>실제로는 결제 공급자가 2개이고, 한 곳은 모킹이 어려움</td>
+                </tr>
+                <tr>
+                  <td>문제</td>
+                  <td>지도가 영토보다 낡거나 비어 있으면 모델은 그 빈칸까지 채워버림</td>
+                  <td>“이렇게 하겠지”식의 가정이 PR 전체를 오염</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="four">
+          <h2>3) 4가지 지식 범주</h2>
+          <div class="grid-2">
+            <div class="card">
+              <div class="tag">Known Knowns</div>
+              <p>이미 프롬프트에 적힌 것. 예: “React 18을 사용 중”</p>
+            </div>
+            <div class="card">
+              <div class="tag">Known Unknowns</div>
+              <p>모른다는 걸 아는 것. 예: “이 API의 rate limit은 모르겠다”</p>
+            </div>
+            <div class="card">
+              <div class="tag">Unknown Knowns</div>
+              <p>너무 당연해서 안 적지만, 보면 바로 알아차리는 것.</p>
+            </div>
+            <div class="card">
+              <div class="tag">Unknown Unknowns</div>
+              <p>생각조차 못한 빈칸. 이 글이 가장 중요하게 보는 대상입니다.</p>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:14px;">
+            <strong>핵심:</strong> 실패를 막는 포인트는 known unknowns를 메모하는 것보다,
+            <strong>unknown unknowns를 찾는 질문</strong>을 먼저 넣는 데 있습니다.
+          </div>
+        </section>
+
+        <section id="workflow">
+          <h2>4) 실전 워크플로우</h2>
+          <ol>
+            <li><strong>Blindspot pass</strong>로 빈칸 찾기</li>
+            <li><strong>Exploration / brainstorming</strong>으로 방향 확정</li>
+            <li><strong>Structured interview</strong>로 애매함 해소</li>
+            <li><strong>Implementation plan</strong>으로 바뀌기 쉬운 부분 정리</li>
+            <li><strong>implementation-notes.md</strong>에 결정과 예외를 기록</li>
+            <li><strong>퀴즈/리뷰</strong>로 이해 여부를 검증</li>
+          </ol>
+
+          <div class="grid-2" style="margin-top:16px;">
+            <div class="card">
+              <div class="tag">1. Blindspot pass</div>
+              <p>
+                구현 전에 “내가 뭘 놓치고 있나?”를 묻습니다. 가장 빠른 비용 절감 단계입니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">2. 계획 후 실행</div>
+              <p>
+                바로 코딩하지 말고, 데이터 모델·인터페이스·사용자 영향 범위를 먼저 계획합니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">3. 기록</div>
+              <p>
+                구현 중 바뀐 점을 별도 노트로 남기면 다음 시도에서 같은 실수를 반복하지 않습니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">4. 검증</div>
+              <p>
+                마지막엔 설명문/퀴즈/HTML 리포트로 스스로 이해했는지 확인합니다. “만들기”보다 중요합니다.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="prompts">
+          <h2>5) 바로 쓰는 프롬프트 예시</h2>
+          <p>아래 문장들은 글의 흐름을 실제 작업에 옮긴 버전입니다.</p>
+
+          <h3>Blindspot pass</h3>
+          <pre>나는 지금 새 auth provider를 추가하려고 해. 이 코드베이스의 auth 모듈은 거의 모르고 있어.
+내가 놓치기 쉬운 unknown unknowns를 먼저 찾아줘.
+특히 아래를 중심으로 봐줘:
+- 아키텍처에 영향을 주는 질문
+- 데이터 모델 변경 가능성
+- 보안/세션/리다이렉트/테스트의 누락 가능성
+- 내가 다음으로 읽어야 할 파일
+
+출력은:
+1) 놓치기 쉬운 질문
+2) 위험한 가정
+3) 다음 행동 순서
+4) 내가 너에게 더 잘 물어야 할 질문</pre>
+
+          <h3>Structured interview</h3>
+          <pre>질문을 한 번에 하나씩 해줘.
+단, 아래 기준으로 우선순위를 정해줘:
+- 답이 바뀌면 설계가 달라지는 질문
+- 지금 안 정하면 나중에 되돌리기 어려운 질문
+- 구현 전에 꼭 알아야 하는 질문
+
+질문을 다 던지기보다, 가장 중요한 것부터 순서대로 물어봐.</pre>
+
+          <h3>Implementation notes</h3>
+          <pre>작업하면서 의도에서 벗어난 점, 바뀐 결정, 보수적으로 선택한 부분을
+implementation-notes.md에 계속 추가해줘.
+
+형식:
+- decision: ...
+- why: ...
+- deviation: ...
+- next_check: ...</pre>
+        </section>
+
+        <section id="example">
+          <h2>6) 예시: auth provider 추가 작업</h2>
+          <div class="lead">
+            <p>
+              예를 들어 새 로그인 공급자를 추가한다고 해보겠습니다. 겉보기엔 “버튼 하나 더 붙이면 끝”처럼 보여도,
+              실제로는 세션 갱신, callback URL, 환경변수, 테스트 더미, 배포 설정이 함께 움직일 수 있습니다.
+            </p>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <div class="tag">나쁜 접근</div>
+              <p>
+                “OAuth 버튼 추가해줘.”만 남기고 바로 코드 작성.
+                결과: 리다이렉트 URI 누락, 테스트 환경 불일치, 보안 검토 빠짐.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">좋은 접근</div>
+              <p>
+                먼저 blindspot pass → 필요한 파일 확인 → 구현 계획 → 예외 기록 → 마지막 검증.
+                결과: 처음엔 느려 보여도 되돌림 비용이 크게 줄어듭니다.
+              </p>
+            </div>
+          </div>
+
+          <h3 style="margin-top:18px;">작업 흐름 예시</h3>
+          <ol>
+            <li>현재 auth 폴더와 환경변수 목록 파악</li>
+            <li>리다이렉트와 세션 처리 경로 확인</li>
+            <li>필요한 변경 범위를 한 장의 계획으로 정리</li>
+            <li>구현 중 예상 밖 제약은 notes에 남김</li>
+            <li>최종적으로 “내가 무엇을 놓쳤는지”를 다시 질문</li>
+          </ol>
+        </section>
+
+        <section id="checklist">
+          <h2>7) 오늘 바로 적용 체크리스트</h2>
+          <div class="checklist">
+            <div class="item">
+              <strong>Done when 1</strong>
+              새 작업 시작 전에 “내가 아직 모르는 것” 3개를 먼저 적는다.
+            </div>
+            <div class="item">
+              <strong>Done when 2</strong>
+              구현 전에 blindspot pass를 한 번 돌린다.
+            </div>
+            <div class="item">
+              <strong>Done when 3</strong>
+              계획에서 데이터 모델·인터페이스·사용자 영향 범위를 분리해서 쓴다.
+            </div>
+            <div class="item">
+              <strong>Done when 4</strong>
+              작업 중 바뀐 판단을 implementation-notes.md에 기록한다.
+            </div>
+            <div class="item">
+              <strong>Done when 5</strong>
+              마지막에 요약/퀴즈로 스스로 검증한다.
+            </div>
+            <div class="item">
+              <strong>Done when 6</strong>
+              다음 세션에서 같은 작업을 다시 해도, 처음보다 더 좋은 프롬프트를 쓸 수 있다.
+            </div>
+          </div>
+        </section>
+
+        <section id="sources">
+          <h2>출처</h2>
+          <ul class="source-list">
+            <li>
+              X post:
+              <a href="https://x.com/trq212/status/2073100352921215386" target="_blank" rel="noreferrer noopener">
+                https://x.com/trq212/status/2073100352921215386
+              </a>
+            </li>
+            <li>
+              Article preview:
+              <a href="https://x.com/trq212/article/2073100352921215386" target="_blank" rel="noreferrer noopener">
+                A Field Guide to Fable: Finding Your Unknowns
+              </a>
+            </li>
+            <li>
+              Supporting references used to flesh out the practical workflow:
+              The Decoder, Claude Platform Docs, and public summaries surfaced during extraction.
+            </li>
+          </ul>
+        </section>
+      </main>
+    </div>
+
+    <footer>
+      Oper Hermes Output · Minimal white theme
+    </footer>
+  </div>
+</body>
+</html>
