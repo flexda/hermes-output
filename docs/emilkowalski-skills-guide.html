@@ -5,40 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>emilkowalski/skills — 설명서와 활용 예시</title>
   <meta name="description" content="emilkowalski/skills 저장소의 구조, 각 스킬의 역할, 그리고 바로 복사해 쓸 수 있는 활용 예시를 정리한 모바일 우선 HTML 가이드." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f8f7f3;
-      --surface: rgba(255, 255, 255, 0.92);
-      --surface-strong: rgba(255, 255, 255, 0.98);
-      --border: rgba(148, 163, 184, 0.22);
-      --text: #111827;
-      --muted: #4b5563;
-      --soft: #6b7280;
+      --text: #24292f;
+      --secondary: #57606a;
+      --secondary-2: #3a4149;
+      --muted: #8b93a1;
+      --hairline: #e7eaef;
+      --hairline-2: #eceff2;
+      --hairline-3: #d0d7de;
+      --surface: #f6f8fa;
+      --surface-2: #f3f4f6;
+      --code-bg: #0d1117;
+      --code-fg: #c9d1d9;
+      --code-comment: #8b949e;
       --accent: #2563eb;
       --accent-2: #0f766e;
       --accent-3: #7c3aed;
-      --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
-      --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.06);
-      --code-bg: #0f172a;
-      --code-fg: #e2e8f0;
-      --pill-bg: rgba(37, 99, 235, 0.07);
-      --pill-border: rgba(37, 99, 235, 0.14);
     }
 
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--text);
-      line-height: 1.72;
-      overflow-x: clip;
-      background:
-        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 26%),
-        radial-gradient(circle at top right, rgba(124, 58, 237, 0.08), transparent 22%),
-        linear-gradient(180deg, #fffdfa 0%, var(--bg) 100%);
-      padding: clamp(12px, 2.4vw, 24px);
+      background: #eef1f5;
+      font-size: 15px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      padding: 0;
+      margin: 0;
     }
 
     img, svg, video, iframe, object, embed {
@@ -51,24 +51,17 @@
       word-break: break-word;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.34), rgba(255,255,255,0.34)),
-        linear-gradient(90deg, rgba(148,163,184,0.06) 1px, transparent 1px),
-        linear-gradient(rgba(148,163,184,0.06) 1px, transparent 1px);
-      background-size: auto, 48px 48px, 48px 48px;
-      mask-image: linear-gradient(180deg, rgba(0,0,0,0.14), transparent 82%);
-    }
 
     .container {
+      max-width: 760px;
+      margin: 40px auto;
+      background: #ffffff;
+      border: 1px solid var(--hairline);
+      border-radius: 10px;
+      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.06);
+      padding: 64px 72px;
       position: relative;
       z-index: 1;
-      max-width: 1180px;
-      margin: 0 auto;
     }
 
     .nav-back {
@@ -77,30 +70,33 @@
       gap: 8px;
       color: var(--muted);
       text-decoration: none;
-      font-size: 14px;
-      margin-bottom: 18px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 8px;
+      letter-spacing: 0.2px;
     }
     .nav-back:hover { color: var(--accent); }
 
     .page-actions {
       display: flex;
       justify-content: center;
-      margin: 18px 0 0;
+      margin: 28px 0 0;
     }
 
     .home-btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      min-height: 42px;
-      padding: 0 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(37, 99, 235, 0.14);
-      background: rgba(255,255,255,0.88);
-      color: var(--accent);
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 4px;
+      border: 1px solid var(--hairline-3);
+      background: var(--surface-2);
+      color: var(--text);
       text-decoration: none;
       font-weight: 700;
-      box-shadow: var(--shadow-soft);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
     }
 
     .home-btn:hover { background: #fff; }
@@ -116,41 +112,38 @@
       justify-content: center;
       gap: 8px;
       margin-bottom: 14px;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .badge {
       display: inline-flex;
       align-items: center;
-      min-height: 34px;
-      padding: 0 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.84);
-      box-shadow: var(--shadow-soft);
-      font-size: 12px;
-      color: var(--muted);
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 4px;
+      border: 1px solid var(--hairline-3);
+      background: var(--surface-2);
+      font-size: 11px;
+      color: var(--secondary);
       white-space: nowrap;
     }
 
     header h1 {
-      margin: 0;
-      font-size: clamp(30px, 5.8vw, 54px);
+      margin: 6px 0 2px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 30px;
       line-height: 1.08;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.5px;
     }
 
     header p {
-      margin: 14px auto 0;
-      max-width: 940px;
-      color: var(--muted);
-      font-size: 16px;
+      margin: 0 0 28px;
+      color: var(--secondary);
+      font-size: 15px;
     }
 
     .layout {
-      display: grid;
-      grid-template-columns: minmax(250px, 300px) minmax(0, 1fr);
-      gap: 22px;
-      align-items: start;
+      display: block;
     }
 
     .sidebar,
@@ -165,35 +158,40 @@
     .table-wrap,
     .note {
       background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(12px);
+      border: 1px solid var(--hairline);
+      border-radius: 6px;
+      box-shadow: none;
     }
 
     .sidebar {
-      position: sticky;
-      top: 18px;
-      padding: 18px;
+      position: static;
+      top: auto;
+      padding: 16px 16px 12px;
+      margin-bottom: 16px;
     }
     .sidebar h2 {
       margin: 0 0 10px;
-      font-size: 15px;
-      color: var(--text);
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'JetBrains Mono', monospace;
     }
     .toc {
       display: grid;
       gap: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
     .toc a {
       display: block;
-      padding: 9px 11px;
-      border-radius: 12px;
+      padding: 8px 10px;
+      border-radius: 4px;
       text-decoration: none;
-      color: var(--muted);
-      background: rgba(255,255,255,0.62);
-      border: 1px solid transparent;
+      color: var(--secondary);
+      background: var(--surface-2);
+      border: 1px solid var(--hairline-2);
       line-height: 1.35;
+      font-size: 13px;
     }
     .toc a:hover {
       color: var(--accent);
@@ -202,15 +200,22 @@
     }
 
     .content {
-      padding: 28px;
+      padding: 0;
+      border: none;
+      background: transparent;
     }
 
-    section { margin-bottom: 34px; }
+    section { margin-bottom: 24px; }
     h2 {
       margin: 0 0 12px;
-      font-size: 24px;
-      line-height: 1.25;
-      letter-spacing: -0.02em;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      border-top: 1px solid var(--hairline);
+      padding-top: 20px;
     }
     h3 {
       margin: 0 0 8px;
@@ -223,14 +228,15 @@
     li { margin-bottom: 6px; }
 
     .hero {
-      padding: 20px;
+      padding: 0;
       margin-bottom: 16px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248, 250, 252, 0.96));
+      background: transparent;
+      border: none;
     }
 
     .hero-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+      grid-template-columns: 1fr;
       gap: 16px;
       align-items: stretch;
     }
@@ -247,50 +253,51 @@
     .pill {
       display: inline-flex;
       align-items: center;
-      min-height: 34px;
-      padding: 0 12px;
-      border-radius: 999px;
-      border: 1px solid var(--pill-border);
-      background: var(--pill-bg);
-      font-size: 13px;
-      color: var(--muted);
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 4px;
+      border: 1px solid var(--hairline-3);
+      background: var(--surface-2);
+      font-size: 12px;
+      color: var(--secondary);
       white-space: nowrap;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .quote {
       margin-top: 0;
-      padding: 18px 20px;
-      border-left: 5px solid var(--accent);
-      background: rgba(37, 99, 235, 0.06);
-      border-radius: 0 18px 18px 0;
+      padding: 12px 14px;
+      border-left: 3px solid var(--secondary);
+      background: var(--surface);
+      border-radius: 0 6px 6px 0;
     }
     .quote strong { color: var(--text); }
     .quote small { display: block; margin-top: 8px; color: var(--soft); }
 
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
+      grid-template-columns: 1fr;
+      gap: 10px;
     }
 
     .card {
-      padding: 18px;
-      background: var(--surface-strong);
+      padding: 14px 16px;
+      background: var(--surface);
     }
     .card .tag {
       display: inline-block;
       margin-bottom: 10px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--accent);
+      color: var(--secondary);
     }
     .card p { margin: 0; }
 
     .artifact {
-      padding: 18px;
-      background: var(--surface-strong);
+      padding: 14px 16px;
+      background: var(--surface);
     }
     .artifact + .artifact { margin-top: 12px; }
     .artifact-head {
@@ -309,36 +316,36 @@
     }
 
     .note {
-      padding: 16px 18px;
-      background: rgba(255, 255, 255, 0.94);
+      padding: 14px 16px;
+      background: var(--surface);
       margin-bottom: 14px;
     }
 
     .table-wrap {
       overflow-x: auto;
-      background: var(--surface-strong);
+      background: var(--surface);
       margin-top: 12px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 680px;
-      font-size: 14px;
+      min-width: 620px;
+      font-size: 13.5px;
     }
-    thead tr { border-bottom: 1px solid rgba(148,163,184,0.2); }
+    thead tr { border-bottom: 1px solid var(--hairline-3); }
     th {
       text-align: left;
-      color: var(--soft);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 14px 16px;
-      background: rgba(248, 250, 252, 0.9);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: var(--muted);
+      font-weight: 600;
+      padding: 10px 12px;
+      background: var(--surface-2);
     }
     td {
       vertical-align: top;
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(148,163,184,0.14);
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--hairline-2);
     }
     tr:last-child td { border-bottom: none; }
 
@@ -347,12 +354,13 @@
       margin: 0;
       background: var(--code-bg);
       color: var(--code-fg);
-      border-radius: 16px;
+      border-radius: 6px;
       padding: 16px 18px;
       overflow: auto;
-      font-size: 13px;
+      font-size: 12.5px;
       line-height: 1.7;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: none;
     }
 
     .code-shell {
@@ -369,14 +377,14 @@
       top: 10px;
       right: 10px;
       z-index: 2;
-      min-height: 32px;
-      padding: 0 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.22);
+      min-height: 28px;
+      padding: 0 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255, 255, 255, 0.08);
       color: #f8fafc;
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
       cursor: pointer;
       backdrop-filter: blur(10px);
     }
@@ -417,7 +425,7 @@
 
     .skill-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 14px;
     }
 
@@ -484,7 +492,7 @@
 
     .faq-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 14px;
     }
 
@@ -506,27 +514,19 @@
     }
 
     @media (max-width: 960px) {
-      .layout { grid-template-columns: 1fr; }
-      .sidebar { position: static; }
-      .hero-grid { grid-template-columns: 1fr; }
-      .card-grid,
-      .skill-grid,
-      .faq-grid { grid-template-columns: 1fr; }
-      table { min-width: 620px; }
+      .container { margin: 20px auto; padding: 28px 20px; }
+      .toc { grid-template-columns: 1fr; }
+      .table-wrap table { min-width: 620px; }
     }
 
     @media (max-width: 640px) {
-      body { padding: 12px; }
-      .content { padding: 18px; }
-      .hero { padding: 18px; }
-      h2 { font-size: 21px; }
-      header p { font-size: 15px; }
+      .container { margin: 0; border: none; border-radius: 0; box-shadow: none; padding: 20px 16px 24px; }
+      header p { font-size: 14px; }
       .pill-row { gap: 6px; }
       .pill { white-space: normal; }
-      .step { grid-template-columns: 1fr; }
-      .step::before { width: 40px; height: 40px; }
-      .table-wrap { margin-left: -18px; margin-right: -18px; border-radius: 0; }
+      .table-wrap { margin-left: -16px; margin-right: -16px; border-radius: 0; }
       .table-wrap table { min-width: 760px; }
+      .copy-btn { top: 8px; right: 8px; }
     }
 
     @media print {
@@ -539,7 +539,9 @@
 </head>
 <body>
   <div class="container">
-    <a class="nav-back" href="../index.html">← 홈으로</a>
+    <div class="page-actions" style="margin: 0 0 16px;">
+      <a class="home-btn" href="../index.html">HOME</a>
+    </div>
 
     <header>
       <div class="eyebrow">
@@ -596,6 +598,21 @@
               </p>
               <small>출처: README와 각 SKILL.md frontmatter의 설명을 바탕으로 요약</small>
             </div>
+          </div>
+        </section>
+
+        <section id="sources">
+          <h2>1-1. 원문 링크</h2>
+          <div class="note">
+            <ul>
+              <li><a href="https://github.com/emilkowalski/skills">GitHub repository</a></li>
+              <li><a href="https://raw.githubusercontent.com/emilkowalski/skills/main/README.md">README.md</a></li>
+              <li><a href="https://github.com/emilkowalski/skills/blob/main/skills/emil-design-eng/SKILL.md">emil-design-eng</a></li>
+              <li><a href="https://github.com/emilkowalski/skills/blob/main/skills/review-animations/SKILL.md">review-animations</a></li>
+              <li><a href="https://github.com/emilkowalski/skills/blob/main/skills/improve-animations/SKILL.md">improve-animations</a></li>
+              <li><a href="https://github.com/emilkowalski/skills/blob/main/skills/animation-vocabulary/SKILL.md">animation-vocabulary</a></li>
+              <li><a href="https://github.com/emilkowalski/skills/blob/main/skills/apple-design/SKILL.md">apple-design</a></li>
+            </ul>
           </div>
         </section>
 
@@ -852,7 +869,7 @@
         </footer>
 
         <div class="page-actions">
-          <a class="home-btn" href="../index.html">← 홈으로 가기</a>
+          <a class="home-btn" href="../index.html">HOME</a>
         </div>
       </main>
     </div>
@@ -866,8 +883,7 @@
           var shell = button.closest('.code-shell');
           var pre = shell && shell.querySelector('pre');
           if (!pre) return;
-          var text = pre.innerText.replace(/
-$/, '');
+          var text = pre.innerText.replace(/\n$/, '');
           try {
             await navigator.clipboard.writeText(text);
             var original = button.textContent;
