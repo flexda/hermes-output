@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>emilkowalski/skills — 설명서와 활용 예시</title>
+  <meta name="description" content="emilkowalski/skills 저장소의 구조, 각 스킬의 역할, 그리고 바로 복사해 쓸 수 있는 활용 예시를 정리한 모바일 우선 HTML 가이드." />
+  <style>
+    :root {
+      --bg: #f8f7f3;
+      --surface: rgba(255, 255, 255, 0.92);
+      --surface-strong: rgba(255, 255, 255, 0.98);
+      --border: rgba(148, 163, 184, 0.22);
+      --text: #111827;
+      --muted: #4b5563;
+      --soft: #6b7280;
+      --accent: #2563eb;
+      --accent-2: #0f766e;
+      --accent-3: #7c3aed;
+      --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.06);
+      --code-bg: #0f172a;
+      --code-fg: #e2e8f0;
+      --pill-bg: rgba(37, 99, 235, 0.07);
+      --pill-border: rgba(37, 99, 235, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.72;
+      overflow-x: clip;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 26%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.08), transparent 22%),
+        linear-gradient(180deg, #fffdfa 0%, var(--bg) 100%);
+      padding: clamp(12px, 2.4vw, 24px);
+    }
+
+    img, svg, video, iframe, object, embed {
+      max-width: 100%;
+      height: auto;
+    }
+
+    h1, h2, h3, h4, p, li, a, code, pre, td, th, .badge, .pill {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.34), rgba(255,255,255,0.34)),
+        linear-gradient(90deg, rgba(148,163,184,0.06) 1px, transparent 1px),
+        linear-gradient(rgba(148,163,184,0.06) 1px, transparent 1px);
+      background-size: auto, 48px 48px, 48px 48px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.14), transparent 82%);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+    .nav-back:hover { color: var(--accent); }
+
+    header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.84);
+      box-shadow: var(--shadow-soft);
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(30px, 5.8vw, 54px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    header p {
+      margin: 14px auto 0;
+      max-width: 940px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(250px, 300px) minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .sidebar,
+    .content,
+    .hero,
+    .card,
+    .callout,
+    .prompt,
+    .quote,
+    .decision,
+    .artifact,
+    .table-wrap,
+    .note {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      padding: 18px;
+    }
+    .sidebar h2 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      color: var(--text);
+    }
+    .toc {
+      display: grid;
+      gap: 8px;
+    }
+    .toc a {
+      display: block;
+      padding: 9px 11px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--muted);
+      background: rgba(255,255,255,0.62);
+      border: 1px solid transparent;
+      line-height: 1.35;
+    }
+    .toc a:hover {
+      color: var(--accent);
+      border-color: rgba(37, 99, 235, 0.18);
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    section { margin-bottom: 34px; }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+    p, li { color: var(--muted); }
+    ul, ol { padding-left: 22px; }
+    li { margin-bottom: 6px; }
+
+    .hero {
+      padding: 20px;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248, 250, 252, 0.96));
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .hero-text p { margin: 0 0 12px; }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--pill-border);
+      background: var(--pill-bg);
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .quote {
+      margin-top: 0;
+      padding: 18px 20px;
+      border-left: 5px solid var(--accent);
+      background: rgba(37, 99, 235, 0.06);
+      border-radius: 0 18px 18px 0;
+    }
+    .quote strong { color: var(--text); }
+    .quote small { display: block; margin-top: 8px; color: var(--soft); }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      padding: 18px;
+      background: var(--surface-strong);
+    }
+    .card .tag {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .card p { margin: 0; }
+
+    .artifact {
+      padding: 18px;
+      background: var(--surface-strong);
+    }
+    .artifact + .artifact { margin-top: 12px; }
+    .artifact-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .artifact-head h3 { margin: 0; }
+    .artifact-meta {
+      font-size: 12px;
+      color: var(--soft);
+      white-space: nowrap;
+    }
+
+    .note {
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.94);
+      margin-bottom: 14px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--surface-strong);
+      margin-top: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+      font-size: 14px;
+    }
+    thead tr { border-bottom: 1px solid rgba(148,163,184,0.2); }
+    th {
+      text-align: left;
+      color: var(--soft);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 14px 16px;
+      background: rgba(248, 250, 252, 0.9);
+    }
+    td {
+      vertical-align: top;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(148,163,184,0.14);
+    }
+    tr:last-child td { border-bottom: none; }
+
+    .code-block,
+    pre {
+      margin: 0;
+      background: var(--code-bg);
+      color: var(--code-fg);
+      border-radius: 16px;
+      padding: 16px 18px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.7;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    code.inline {
+      background: rgba(15, 23, 42, 0.06);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      padding: 1px 6px;
+      border-radius: 6px;
+      color: #0f172a;
+      font-size: 0.95em;
+    }
+
+    .prompt {
+      padding: 18px;
+      background: var(--surface-strong);
+    }
+    .prompt h3 { margin-bottom: 10px; }
+    .prompt .label {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.08);
+      color: var(--accent-2);
+      border: 1px solid rgba(15, 118, 110, 0.16);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .skill-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .skill-card {
+      background: var(--surface-strong);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+    .skill-card h3 {
+      margin: 0 0 8px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .skill-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--accent);
+      background: rgba(37, 99, 235, 0.08);
+      border: 1px solid rgba(37, 99, 235, 0.14);
+      white-space: nowrap;
+    }
+    .skill-card p { margin: 0 0 10px; }
+    .skill-card ul { margin: 0; }
+
+    .steps {
+      display: grid;
+      gap: 14px;
+      counter-reset: steps;
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.94);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+    }
+    .step::before {
+      counter-increment: steps;
+      content: counter(steps);
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(124,58,237,0.12));
+      color: var(--accent);
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+    .step h3 { margin: 0 0 6px; }
+    .step p { margin: 0; }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .faq {
+      padding: 18px;
+      background: var(--surface-strong);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+    .faq h3 { margin: 0 0 8px; }
+    .faq p { margin: 0; }
+
+    footer {
+      margin-top: 18px;
+      color: var(--soft);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .card-grid,
+      .skill-grid,
+      .faq-grid { grid-template-columns: 1fr; }
+      table { min-width: 620px; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      .content { padding: 18px; }
+      .hero { padding: 18px; }
+      h2 { font-size: 21px; }
+      header p { font-size: 15px; }
+      .pill-row { gap: 6px; }
+      .pill { white-space: normal; }
+      .step { grid-template-columns: 1fr; }
+      .step::before { width: 40px; height: 40px; }
+      .table-wrap { margin-left: -18px; margin-right: -18px; border-radius: 0; }
+      .table-wrap table { min-width: 760px; }
+    }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      .sidebar, .nav-back { display: none; }
+      .content, .hero, .card, .skill-card, .faq, .step, .note, .artifact, .prompt { box-shadow: none; }
+      .content { padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="nav-back" href="../index.html">← 홈으로</a>
+
+    <header>
+      <div class="eyebrow">
+        <span class="badge">GitHub repo guide</span>
+        <span class="badge">emilkowalski/skills</span>
+        <span class="badge">설명서 + 활용 예시</span>
+      </div>
+      <h1>emilkowalski/skills</h1>
+      <p>
+        디자인 엔지니어를 위한 Agent Skills 저장소를 한 장으로 풀어 쓴 안내서입니다.
+        저장소가 무엇을 담고 있는지, 각 스킬이 언제 필요한지, 실제로 어떤 프롬프트로 쓰면 좋은지까지
+        바로 복사해 쓸 수 있게 정리했습니다.
+      </p>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar" aria-label="목차">
+        <h2>목차</h2>
+        <nav class="toc">
+          <a href="#overview">1. 저장소 한눈에 보기</a>
+          <a href="#structure">2. 저장소 구조</a>
+          <a href="#skills">3. 스킬별 설명</a>
+          <a href="#examples">4. 활용 예시</a>
+          <a href="#workflow">5. 추천 사용 흐름</a>
+          <a href="#install">6. 설치 방법</a>
+          <a href="#faq">7. 자주 묻는 점</a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <section class="hero" id="overview">
+          <div class="hero-grid">
+            <div class="hero-text">
+              <h2>1. 저장소 한눈에 보기</h2>
+              <p>
+                <code class="inline">emilkowalski/skills</code>는 디자인 엔지니어 Emil Kowalski가 만든
+                AI 에이전트용 스킬 모음입니다. 핵심 목적은 <strong>인터페이스의 미세한 품질</strong>,
+                특히 <strong>애니메이션과 모션 판단</strong>을 더 정확하게 만드는 것입니다.
+              </p>
+              <div class="pill-row" aria-label="핵심 키워드">
+                <span class="pill">Design engineers</span>
+                <span class="pill">UI polish</span>
+                <span class="pill">Animation craft</span>
+                <span class="pill">Agent Skills</span>
+                <span class="pill">Prompt reuse</span>
+              </div>
+            </div>
+            <div class="quote">
+              <strong>이 저장소가 해결하는 문제</strong>
+              <p>
+                에이전트가 “작동은 하지만 덜 멋진” UI를 만드는 이유는
+                의도, 이징, 물성, 회복성, 빈도 같은 디테일을 자주 놓치기 때문입니다.
+                이 스킬들은 그 빈틈을 메우는 체크리스트 역할을 합니다.
+              </p>
+              <small>출처: README와 각 SKILL.md frontmatter의 설명을 바탕으로 요약</small>
+            </div>
+          </div>
+        </section>
+
+        <section id="structure">
+          <h2>2. 저장소 구조</h2>
+          <div class="card-grid">
+            <div class="card">
+              <span class="tag">README.md</span>
+              <p>저장소 철학, 설치 방법, 스킬 목록, 그리고 어떤 문제를 풀기 위한 저장소인지 설명합니다.</p>
+            </div>
+            <div class="card">
+              <span class="tag">skills/</span>
+              <p>실제 스킬 폴더들이 들어 있는 영역입니다. 각 폴더는 하나의 사용 시나리오에 대응합니다.</p>
+            </div>
+            <div class="card">
+              <span class="tag">SKILL.md</span>
+              <p>각 스킬의 본문입니다. 언제 쓰는지, 무엇을 해야 하는지, 어떤 제약이 있는지 적습니다.</p>
+            </div>
+            <div class="card">
+              <span class="tag">핵심 원칙</span>
+              <p>“더 자세히 말하는 설명서”보다 “에이전트가 바로 따를 수 있는 절차”에 초점이 맞춰져 있습니다.</p>
+            </div>
+          </div>
+
+          <div class="note" style="margin-top:14px;">
+            <strong>현재 공개된 스킬</strong>
+            <p style="margin:8px 0 0;">
+              <code class="inline">emil-design-eng</code>, <code class="inline">review-animations</code>,
+              <code class="inline">improve-animations</code>, <code class="inline">animation-vocabulary</code>,
+              <code class="inline">apple-design</code> — 총 5개입니다.
+            </p>
+          </div>
+        </section>
+
+        <section id="skills">
+          <h2>3. 스킬별 설명</h2>
+          <div class="skill-grid">
+            <article class="skill-card">
+              <h3><span class="skill-badge">main skill</span> emil-design-eng</h3>
+              <p>
+                저장소의 중심 스킬입니다. Emil Kowalski의 디자인 엔지니어링 철학을 담고 있으며,
+                애니메이션뿐 아니라 버튼 상태, 깊이감, spacing, 레이아웃 감각 같은 UI 전반의 품질을 다룹니다.
+              </p>
+              <ul>
+                <li>UI를 “그냥 돌아가는 수준”에서 “손맛이 있는 수준”으로 올리고 싶을 때</li>
+                <li>컴포넌트/화면 리뷰에서 폴리시 관점이 필요할 때</li>
+                <li>에이전트가 디자인 결정을 더 잘 하게 만들고 싶을 때</li>
+              </ul>
+            </article>
+
+            <article class="skill-card">
+              <h3><span class="skill-badge">review</span> review-animations</h3>
+              <p>
+                애니메이션과 모션 코드를 “리뷰”하는 전용 스킬입니다. 한 diff에 대해 얼마나 정교하게
+                동작하는지 점검할 때 쓰는 편이 맞습니다.
+              </p>
+              <ul>
+                <li>이징이 너무 둔한지</li>
+                <li>상호작용 빈도에 비해 과한 모션이 들어갔는지</li>
+                <li>입출력/인터랙션에 맞게 잘 설계됐는지</li>
+              </ul>
+            </article>
+
+            <article class="skill-card">
+              <h3><span class="skill-badge">audit</span> improve-animations</h3>
+              <p>
+                코드베이스 전체를 훑어 애니메이션 문제를 우선순위로 정리하고,
+                실행 가능한 수정 계획을 쓰는 스킬입니다. source code를 직접 고치지 않고,
+                다른 에이전트가 수행할 수 있는 계획서만 만듭니다.
+              </p>
+              <ul>
+                <li>한 화면이 아니라 전체 앱의 모션 품질을 점검하고 싶을 때</li>
+                <li>고급 모델로 진단, 저렴한 모델로 실행하는 분업이 필요할 때</li>
+                <li>수정 범위를 계획서로 분리하고 싶을 때</li>
+              </ul>
+            </article>
+
+            <article class="skill-card">
+              <h3><span class="skill-badge">glossary</span> animation-vocabulary</h3>
+              <p>
+                사용자가 막연하게 묘사한 모션을 정확한 용어로 되돌려주는 역조회 사전입니다.
+                “그 팝업이 툭 튀어나오는 느낌” 같은 설명을 정리할 때 특히 유용합니다.
+              </p>
+              <ul>
+                <li>효과 이름이 기억나지 않을 때</li>
+                <li>AI에게 정확한 용어로 요구사항을 다시 쓰고 싶을 때</li>
+                <li>비슷한 모션 용어를 구분해야 할 때</li>
+              </ul>
+            </article>
+
+            <article class="skill-card" style="grid-column:1/-1;">
+              <h3><span class="skill-badge">motion philosophy</span> apple-design</h3>
+              <p>
+                Apple의 WWDC 디자인 토크를 바탕으로, fluid motion, spring, gesture, momentum,
+                translucency, reduced motion 같은 개념을 웹 구현 관점으로 옮겨 놓은 스킬입니다.
+              </p>
+              <ul>
+                <li>드래그, 스와이프, 시트, 카드 전환처럼 손맛이 중요한 UI</li>
+                <li>사용자 입력에 즉시 반응하는 인터랙션</li>
+                <li>“Apple처럼 자연스러운 느낌”을 목표로 하는 경우</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="examples">
+          <h2>4. 활용 예시</h2>
+
+          <article class="prompt">
+            <div class="label">예시 1 · emil-design-eng</div>
+            <h3>UI 리뷰를 맡기고 싶을 때</h3>
+            <pre class="code-block">이 화면의 버튼, 카드, 진입 애니메이션을 Emil Kowalski 관점에서 리뷰해줘.
+특히 다음을 봐줘:
+- 버튼 press feedback이 자연스러운지
+- shadow와 border가 너무 무겁지 않은지
+- scale / opacity / easing이 상호작용 빈도에 맞는지
+
+문제점이 있으면 왜 문제인지, 어떤 방식으로 수정할지 짚어줘.</pre>
+          </article>
+
+          <article class="prompt" style="margin-top:14px;">
+            <div class="label">예시 2 · review-animations</div>
+            <h3>애니메이션 diff 리뷰를 맡기고 싶을 때</h3>
+            <pre class="code-block">아래 diff의 애니메이션만 리뷰해줘.
+- enter / exit timing
+- easing curve 선택
+- keyframe의 시작/종료 상태
+- 성능 상 GPU 친화적인지
+
+애매하면 승인보다 지적 위주로, 수정 우선순위도 같이 줘.</pre>
+          </article>
+
+          <article class="prompt" style="margin-top:14px;">
+            <div class="label">예시 3 · improve-animations</div>
+            <h3>코드베이스 전체 점검과 개선 계획이 필요할 때</h3>
+            <pre class="code-block">이 저장소의 애니메이션을 전체적으로 점검해서,
+1) 가장 큰 문제 5개를 우선순위로 정리하고
+2) 각 항목을 다른 에이전트가 실행할 수 있게
+   파일 경로, 수정 포인트, 기대 효과가 포함된 계획으로 작성해줘.
+
+직접 수정하지 말고 계획만 써줘.</pre>
+          </article>
+
+          <article class="prompt" style="margin-top:14px;">
+            <div class="label">예시 4 · animation-vocabulary</div>
+            <h3>효과 이름이 생각 안 날 때</h3>
+            <pre class="code-block">"버튼이 살짝 튀어 오르면서 나타나는 그 느낌"을
+디자인/모션 용어로 뭐라고 부르는지 알려줘.
+가능하면 가장 가까운 용어를 우선 제시하고,
+비슷한 대안이 있으면 차이도 짚어줘.</pre>
+          </article>
+
+          <article class="prompt" style="margin-top:14px;">
+            <div class="label">예시 5 · apple-design</div>
+            <h3>Apple 스타일의 자연스러운 인터랙션을 만들고 싶을 때</h3>
+            <pre class="code-block">드래그 가능한 bottom sheet를 Apple 스타일에 가깝게 설계하고 싶어.
+- pointer-down에서 즉시 반응
+- velocity를 살린 스프링 전환
+- 중간에 방향 전환 가능
+- reduced motion 대응
+
+웹 구현 기준으로 설계 원칙과 코드 힌트를 정리해줘.</pre>
+          </article>
+        </section>
+
+        <section id="workflow">
+          <h2>5. 추천 사용 흐름</h2>
+          <div class="steps">
+            <div class="step">
+              <div>
+                <h3>스킬 선택</h3>
+                <p>
+                  먼저 문제를 분류합니다. 용어가 필요한지, 단일 diff를 리뷰할지, 전체 코드베이스를 진단할지,
+                  아니면 Apple식 motion principle이 필요한지부터 고릅니다.
+                </p>
+              </div>
+            </div>
+            <div class="step">
+              <div>
+                <h3>목표를 좁게 말하기</h3>
+                <p>
+                  “좋게 해줘”보다 “입장 애니메이션의 easing과 duration을 봐줘”처럼 범위를 작게 써야
+                  스킬이 더 잘 작동합니다.
+                </p>
+              </div>
+            </div>
+            <div class="step">
+              <div>
+                <h3>출력 형식 기대치 정하기</h3>
+                <p>
+                  리뷰용인지, 계획서인지, 용어 사전인지 미리 말하면 결과가 훨씬 안정적입니다.
+                  특히 improve-animations는 계획서 형식이 맞습니다.
+                </p>
+              </div>
+            </div>
+            <div class="step">
+              <div>
+                <h3>결과를 적용</h3>
+                <p>
+                  추천받은 용어, 원칙, 계획을 실제 코드나 프롬프트에 반영합니다.
+                  이 저장소의 강점은 “예쁜 설명”이 아니라 “바로 실행 가능한 절차”입니다.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="install">
+          <h2>6. 설치 방법</h2>
+          <p>
+            README에 적힌 표준 설치 명령은 아래와 같습니다.
+          </p>
+          <pre class="code-block">npx skills@latest add emilkowalski/skills</pre>
+          <p style="margin-top:12px;">
+            설치 후에는 에이전트가 해당 스킬의 <code class="inline">SKILL.md</code>를 읽고,
+            그 안의 절차와 가드레일을 따라 작업하게 됩니다.
+          </p>
+        </section>
+
+        <section id="faq">
+          <h2>7. 자주 묻는 점</h2>
+          <div class="faq-grid">
+            <div class="faq">
+              <h3>이 저장소는 코드 라이브러리인가요?</h3>
+              <p>
+                아니요. 실행 코드보다 <strong>에이전트가 읽는 지침 파일</strong>에 가깝습니다.
+                프론트엔드 구현보다 판단의 질을 높이는 쪽에 목적이 있습니다.
+              </p>
+            </div>
+            <div class="faq">
+              <h3>어떤 작업에 가장 잘 맞나요?</h3>
+              <p>
+                UI polish, motion design, gesture-driven 인터랙션, 애니메이션 감사, 용어 정리처럼
+                “감각과 규칙이 동시에 필요한 작업”에 잘 맞습니다.
+              </p>
+            </div>
+            <div class="faq">
+              <h3>일반적인 코드 작업에도 유용한가요?</h3>
+              <p>
+                일부는 유용하지만, 이 저장소의 핵심 강점은 분명히 <strong>디자인/모션/인터랙션</strong>에 있습니다.
+              </p>
+            </div>
+            <div class="faq">
+              <h3>이 페이지를 한 줄로 요약하면?</h3>
+              <p>
+                <strong>“에이전트가 애니메이션과 UI를 더 맛있게 만들게 돕는 작은 전문 지식 묶음”</strong>입니다.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <footer>
+          based on emilkowalski/skills README and SKILL.md frontmatter
+        </footer>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
