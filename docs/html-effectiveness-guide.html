@@ -31,11 +31,22 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       color: var(--text);
       line-height: 1.75;
+      overflow-x: clip;
       background:
         radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 28%),
         radial-gradient(circle at top right, rgba(8, 145, 178, 0.08), transparent 26%),
         linear-gradient(180deg, #fffdf9 0%, var(--bg) 100%);
-      padding: 24px;
+      padding: clamp(12px, 2.4vw, 24px);
+    }
+
+    img, svg, video, iframe, object, embed {
+      max-width: 100%;
+      height: auto;
+    }
+
+    h1, h2, h3, h4, p, li, a, code, pre, td, th, .badge, .pill {
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     body::before {
@@ -426,6 +437,16 @@
       .artifact-grid { grid-template-columns: 1fr; }
       .prompt-header { align-items: flex-start; }
       .copy-btn { min-height: 34px; }
+      .table-wrap { overflow-x: visible; }
+      table {
+        min-width: 0;
+        width: 100%;
+        table-layout: fixed;
+      }
+      th, td {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
       pre { padding: 14px 15px; font-size: 13px; }
     }
   </style>
