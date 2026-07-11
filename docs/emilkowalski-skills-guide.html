@@ -82,6 +82,29 @@
     }
     .nav-back:hover { color: var(--accent); }
 
+    .page-actions {
+      display: flex;
+      justify-content: center;
+      margin: 18px 0 0;
+    }
+
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(37, 99, 235, 0.14);
+      background: rgba(255,255,255,0.88);
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .home-btn:hover { background: #fff; }
+
     header {
       text-align: center;
       margin-bottom: 18px;
@@ -331,6 +354,37 @@
       line-height: 1.7;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
+
+    .code-shell {
+      position: relative;
+      margin: 0;
+    }
+
+    .code-shell + .code-shell {
+      margin-top: 14px;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 2;
+      min-height: 32px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+    }
+
+    .copy-btn:hover { background: rgba(255, 255, 255, 0.14); }
+    .copy-btn:active { transform: translateY(1px); }
+    .copy-btn.copied { background: rgba(15, 118, 110, 0.92); }
+
     code.inline {
       background: rgba(15, 23, 42, 0.06);
       border: 1px solid rgba(148, 163, 184, 0.18);
@@ -653,57 +707,57 @@
           <article class="prompt">
             <div class="label">예시 1 · emil-design-eng</div>
             <h3>UI 리뷰를 맡기고 싶을 때</h3>
-            <pre class="code-block">이 화면의 버튼, 카드, 진입 애니메이션을 Emil Kowalski 관점에서 리뷰해줘.
+            <div class="code-shell"><button class="copy-btn" type="button">Copy</button><pre class="code-block">이 화면의 버튼, 카드, 진입 애니메이션을 Emil Kowalski 관점에서 리뷰해줘.
 특히 다음을 봐줘:
 - 버튼 press feedback이 자연스러운지
 - shadow와 border가 너무 무겁지 않은지
 - scale / opacity / easing이 상호작용 빈도에 맞는지
 
-문제점이 있으면 왜 문제인지, 어떤 방식으로 수정할지 짚어줘.</pre>
+문제점이 있으면 왜 문제인지, 어떤 방식으로 수정할지 짚어줘.</pre></div>
           </article>
 
           <article class="prompt" style="margin-top:14px;">
             <div class="label">예시 2 · review-animations</div>
             <h3>애니메이션 diff 리뷰를 맡기고 싶을 때</h3>
-            <pre class="code-block">아래 diff의 애니메이션만 리뷰해줘.
+            <div class="code-shell"><button class="copy-btn" type="button">Copy</button><pre class="code-block">아래 diff의 애니메이션만 리뷰해줘.
 - enter / exit timing
 - easing curve 선택
 - keyframe의 시작/종료 상태
 - 성능 상 GPU 친화적인지
 
-애매하면 승인보다 지적 위주로, 수정 우선순위도 같이 줘.</pre>
+애매하면 승인보다 지적 위주로, 수정 우선순위도 같이 줘.</pre></div>
           </article>
 
           <article class="prompt" style="margin-top:14px;">
             <div class="label">예시 3 · improve-animations</div>
             <h3>코드베이스 전체 점검과 개선 계획이 필요할 때</h3>
-            <pre class="code-block">이 저장소의 애니메이션을 전체적으로 점검해서,
+            <div class="code-shell"><button class="copy-btn" type="button">Copy</button><pre class="code-block">이 저장소의 애니메이션을 전체적으로 점검해서,
 1) 가장 큰 문제 5개를 우선순위로 정리하고
 2) 각 항목을 다른 에이전트가 실행할 수 있게
    파일 경로, 수정 포인트, 기대 효과가 포함된 계획으로 작성해줘.
 
-직접 수정하지 말고 계획만 써줘.</pre>
+직접 수정하지 말고 계획만 써줘.</pre></div>
           </article>
 
           <article class="prompt" style="margin-top:14px;">
             <div class="label">예시 4 · animation-vocabulary</div>
             <h3>효과 이름이 생각 안 날 때</h3>
-            <pre class="code-block">"버튼이 살짝 튀어 오르면서 나타나는 그 느낌"을
+            <div class="code-shell"><button class="copy-btn" type="button">Copy</button><pre class="code-block">"버튼이 살짝 튀어 오르면서 나타나는 그 느낌"을
 디자인/모션 용어로 뭐라고 부르는지 알려줘.
 가능하면 가장 가까운 용어를 우선 제시하고,
-비슷한 대안이 있으면 차이도 짚어줘.</pre>
+비슷한 대안이 있으면 차이도 짚어줘.</pre></div>
           </article>
 
           <article class="prompt" style="margin-top:14px;">
             <div class="label">예시 5 · apple-design</div>
             <h3>Apple 스타일의 자연스러운 인터랙션을 만들고 싶을 때</h3>
-            <pre class="code-block">드래그 가능한 bottom sheet를 Apple 스타일에 가깝게 설계하고 싶어.
+            <div class="code-shell"><button class="copy-btn" type="button">Copy</button><pre class="code-block">드래그 가능한 bottom sheet를 Apple 스타일에 가깝게 설계하고 싶어.
 - pointer-down에서 즉시 반응
 - velocity를 살린 스프링 전환
 - 중간에 방향 전환 가능
 - reduced motion 대응
 
-웹 구현 기준으로 설계 원칙과 코드 힌트를 정리해줘.</pre>
+웹 구현 기준으로 설계 원칙과 코드 힌트를 정리해줘.</pre></div>
           </article>
         </section>
 
@@ -754,7 +808,7 @@
           <p>
             README에 적힌 표준 설치 명령은 아래와 같습니다.
           </p>
-          <pre class="code-block">npx skills@latest add emilkowalski/skills</pre>
+          <div class="code-shell"><button class="copy-btn" type="button">Copy</button><pre class="code-block">npx skills@latest add emilkowalski/skills</pre></div>
           <p style="margin-top:12px;">
             설치 후에는 에이전트가 해당 스킬의 <code class="inline">SKILL.md</code>를 읽고,
             그 안의 절차와 가드레일을 따라 작업하게 됩니다.
@@ -796,8 +850,40 @@
         <footer>
           based on emilkowalski/skills README and SKILL.md frontmatter
         </footer>
+
+        <div class="page-actions">
+          <a class="home-btn" href="../index.html">← 홈으로 가기</a>
+        </div>
       </main>
     </div>
   </div>
+
+  <script>
+    (function () {
+      var buttons = Array.prototype.slice.call(document.querySelectorAll('.copy-btn'));
+      buttons.forEach(function (button) {
+        button.addEventListener('click', async function () {
+          var shell = button.closest('.code-shell');
+          var pre = shell && shell.querySelector('pre');
+          if (!pre) return;
+          var text = pre.innerText.replace(/
+$/, '');
+          try {
+            await navigator.clipboard.writeText(text);
+            var original = button.textContent;
+            button.textContent = 'Copied';
+            button.classList.add('copied');
+            setTimeout(function () {
+              button.textContent = original;
+              button.classList.remove('copied');
+            }, 1200);
+          } catch (e) {
+            button.textContent = 'Failed';
+            setTimeout(function () { button.textContent = 'Copy'; }, 1200);
+          }
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
