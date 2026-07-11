@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using Claude Code: The Unreasonable Effectiveness of HTML</title>
+  <meta name="description" content="Thariq Shihipar의 'Using Claude Code: The Unreasonable Effectiveness of HTML'를 바탕으로, HTML이 Markdown보다 더 유리한 이유와 바로 적용할 수 있는 프롬프트, 예시, 의사결정 기준을 정리한 모바일 우선 HTML 가이드." />
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --surface: rgba(255, 255, 255, 0.92);
+      --surface-strong: rgba(255, 255, 255, 0.98);
+      --border: rgba(148, 163, 184, 0.24);
+      --text: #111827;
+      --muted: #4b5563;
+      --soft: #6b7280;
+      --accent: #2563eb;
+      --accent-2: #0891b2;
+      --accent-3: #16a34a;
+      --warning: #b45309;
+      --shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.06);
+      --code-bg: #0f172a;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 28%),
+        radial-gradient(circle at top right, rgba(8, 145, 178, 0.08), transparent 26%),
+        linear-gradient(180deg, #fffdf9 0%, var(--bg) 100%);
+      padding: 24px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.34), rgba(255,255,255,0.34)),
+        linear-gradient(90deg, rgba(148,163,184,0.06) 1px, transparent 1px),
+        linear-gradient(rgba(148,163,184,0.06) 1px, transparent 1px);
+      background-size: auto, 48px 48px, 48px 48px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.14), transparent 82%);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+    .nav-back:hover { color: var(--accent); }
+
+    header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.84);
+      box-shadow: var(--shadow-soft);
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    header h1 {
+      margin: 0;
+      font-size: clamp(30px, 5.8vw, 54px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+    header p {
+      margin: 14px auto 0;
+      max-width: 920px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(250px, 300px) minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .sidebar,
+    .content,
+    .hero,
+    .card,
+    .callout,
+    .prompt,
+    .quote,
+    .decision,
+    .artifact,
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      padding: 18px;
+    }
+    .sidebar h2 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      color: var(--text);
+    }
+    .toc {
+      display: grid;
+      gap: 8px;
+    }
+    .toc a {
+      display: block;
+      padding: 9px 11px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--muted);
+      background: rgba(255,255,255,0.6);
+      border: 1px solid transparent;
+      line-height: 1.35;
+    }
+    .toc a:hover {
+      color: var(--accent);
+      border-color: rgba(37, 99, 235, 0.18);
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    section { margin-bottom: 34px; }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+    p, li { color: var(--muted); }
+    ul, ol { padding-left: 22px; }
+    li { margin-bottom: 6px; }
+
+    .hero {
+      padding: 20px;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248, 250, 252, 0.96));
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+    .hero-text p { margin: 0 0 12px; }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.72);
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .quote {
+      margin-top: 0;
+      padding: 18px 20px;
+      border-left: 5px solid var(--accent);
+      background: rgba(37, 99, 235, 0.06);
+      border-radius: 0 18px 18px 0;
+    }
+    .quote strong { color: var(--text); }
+    .quote small { display: block; margin-top: 8px; color: var(--soft); }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .card {
+      padding: 18px;
+      background: var(--surface-strong);
+    }
+    .card .tag {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .card p { margin: 0; }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--surface-strong);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      background: rgba(248, 250, 252, 0.98);
+      color: var(--text);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+    tr:last-child td { border-bottom: 0; }
+    td:first-child { color: var(--text); font-weight: 700; }
+
+    .callout {
+      padding: 18px 20px;
+      background: rgba(245, 158, 11, 0.08);
+      border-color: rgba(180, 83, 9, 0.14);
+      color: var(--text);
+    }
+    .callout strong { color: var(--text); }
+
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .decision {
+      padding: 18px;
+      background: var(--surface-strong);
+    }
+    .decision h4 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: var(--text);
+    }
+    .decision ul { margin: 0; }
+
+    .prompt {
+      padding: 18px;
+      background: var(--surface-strong);
+    }
+    .prompt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .prompt-header h4 {
+      margin: 0;
+      font-size: 16px;
+      color: var(--text);
+    }
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(37, 99, 235, 0.22);
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      flex: 0 0 auto;
+    }
+    .copy-btn:hover { filter: brightness(1.02); }
+    pre {
+      margin: 0;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: var(--code-bg);
+      color: #e5e7eb;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: rgba(15, 23, 42, 0.08);
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #1e293b;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .artifact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .artifact {
+      padding: 18px;
+      background: var(--surface-strong);
+    }
+    .artifact .kicker {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(8, 145, 178, 0.08);
+      color: #0e7490;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .artifact p { margin: 0; }
+
+    .sources a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .sources a:hover { text-decoration: underline; }
+
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      color: var(--soft);
+      font-size: 13px;
+    }
+
+    .mobile-toc {
+      display: none;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 2px 0 4px;
+      margin: 0 0 16px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .mobile-toc a {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.78);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .mobile-toc a:hover { color: var(--accent); }
+
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .artifact-grid { grid-template-columns: 1fr 1fr; }
+      .card-grid, .decision-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px; }
+      header p { font-size: 15px; }
+      .content { padding: 18px; }
+      .hero { padding: 16px; }
+      .sidebar { display: none; }
+      .mobile-toc { display: flex; }
+      h2 { font-size: 21px; }
+      .card, .decision, .artifact, .callout, .prompt { padding: 16px; }
+      .artifact-grid { grid-template-columns: 1fr; }
+      .prompt-header { align-items: flex-start; }
+      .copy-btn { min-height: 34px; }
+      pre { padding: 14px 15px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="nav-back">&larr; Hermes Output</a>
+
+    <header>
+      <div class="eyebrow">
+        <span class="badge">Source: Claude blog + public summaries</span>
+        <span class="badge">Mobile-first article guide</span>
+        <span class="badge">Copyable prompts included</span>
+      </div>
+      <h1>Using Claude Code: The Unreasonable Effectiveness of HTML</h1>
+      <p>
+        Thariq Shihipar의 글을 기반으로, 왜 HTML이 Claude Code의 출력 포맷으로 유용한지,
+        언제 Markdown보다 낫고 언제는 여전히 Markdown이 더 나은지까지 바로 적용할 수 있게 정리했습니다.
+      </p>
+    </header>
+
+    <nav class="mobile-toc" aria-label="모바일 목차">
+      <a href="#summary">요약</a>
+      <a href="#why">왜 HTML인가</a>
+      <a href="#usecases">사용처</a>
+      <a href="#decision">선택 기준</a>
+      <a href="#prompts">프롬프트</a>
+      <a href="#gallery">예시</a>
+      <a href="#sources">출처</a>
+    </nav>
+
+    <div class="layout">
+      <aside class="sidebar" aria-label="목차">
+        <h2>목차</h2>
+        <div class="toc">
+          <a href="#summary">한 줄 요약</a>
+          <a href="#why">1. Markdown 대신 HTML을 고르는 이유</a>
+          <a href="#dense">2. 정보 밀도와 가독성</a>
+          <a href="#usecases">3. 실제로 잘 맞는 작업들</a>
+          <a href="#loop">4. 인간을 루프 안에 두는 방식</a>
+          <a href="#decision">5. 언제 HTML / 언제 Markdown</a>
+          <a href="#prompts">6. 바로 쓰는 프롬프트</a>
+          <a href="#gallery">7. companion gallery에서 보이는 패턴</a>
+          <a href="#sources">출처</a>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section id="summary" class="hero">
+          <div class="hero-grid">
+            <div class="hero-text">
+              <h2>한 줄 요약</h2>
+              <p>
+                이 글의 핵심은 “HTML이 Markdown보다 예쁘다”가 아닙니다.
+                <strong>사람이 실제로 읽고, 검토하고, 다시 작업에 쓰기 쉬운 출력물은 HTML이 더 잘 만든다</strong>는 점입니다.
+              </p>
+              <p>
+                특히 Claude Code처럼 긴 맥락을 다루는 에이전트에서는, 계획·리뷰·프로토타입·리서치 결과를
+                한 장의 HTML artifact로 만드는 것이 훨씬 실용적입니다.
+              </p>
+              <div class="pill-row" aria-label="핵심 키워드">
+                <span class="pill">information-dense</span>
+                <span class="pill">reviewable artifact</span>
+                <span class="pill">two-way interaction</span>
+                <span class="pill">shareable link</span>
+                <span class="pill">keep humans in the loop</span>
+              </div>
+            </div>
+            <div class="quote">
+              <strong>핵심 문장</strong>
+              <p style="margin:10px 0 0; color: var(--text);">
+                “The unreasonable effectiveness of HTML is not that it is a better markup language than Markdown.
+                It is that HTML gives Claude Code a richer collaboration surface.”
+              </p>
+              <small>HTML은 포맷 전쟁의 승자가 아니라, 협업 표면을 넓혀주는 도구로 이해하는 편이 정확합니다.</small>
+            </div>
+          </div>
+        </section>
+
+        <section id="why">
+          <h2>1) Markdown 대신 HTML을 고르는 이유</h2>
+          <div class="card-grid">
+            <div class="card">
+              <div class="tag">문제</div>
+              <p>
+                Markdown은 짧은 메모에는 좋지만, 길어질수록 읽는 사람이 스크롤만 하다 끝내기 쉽습니다.
+                100줄이 넘는 계획서, PR 설명, 리서치 노트는 점점 “텍스트 덩어리”가 됩니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">HTML의 장점</div>
+              <p>
+                HTML은 제목, 강조, 표, 다이어그램, 탭, 버튼, 링크를 조합해
+                <strong>읽기 쉬운 구조</strong>를 만들 수 있습니다.
+                같은 내용이라도 HTML은 훨씬 더 “검토 가능한 형태”가 됩니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">공유성</div>
+              <p>
+                Markdown은 브라우저에서 즉시 예쁘게 보이지 않지만, HTML은 링크 하나로 바로 열립니다.
+                동료에게 “이거 한번 봐”라고 보낼 때 공유 비용이 낮습니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">상호작용</div>
+              <p>
+                HTML은 슬라이더, 버튼, 예시 토글, copy 버튼 같은 가벼운 인터랙션을 넣을 수 있습니다.
+                설명문이 아니라 <strong>작업용 인터페이스</strong>가 될 수 있습니다.
+              </p>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:14px;">
+            <strong>실무 해석:</strong> HTML을 쓰는 이유는 “예쁘니까”가 아니라,
+            사람이 실제로 읽고 재사용할 가능성을 높이기 위해서입니다.
+          </div>
+        </section>
+
+        <section id="dense">
+          <h2>2) 정보 밀도와 가독성</h2>
+          <div class="table-wrap" role="region" aria-label="Markdown과 HTML 비교">
+            <table>
+              <thead>
+                <tr>
+                  <th>항목</th>
+                  <th>Markdown</th>
+                  <th>HTML</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>긴 문서</td>
+                  <td>길어질수록 평평해지고 읽기 피곤해짐</td>
+                  <td>섹션과 시각 계층을 더 잘 분리할 수 있음</td>
+                </tr>
+                <tr>
+                  <td>설명력</td>
+                  <td>텍스트 중심이라 요점이 묻히기 쉬움</td>
+                  <td>표, 박스, 색상, 다이어그램으로 관계를 보여줄 수 있음</td>
+                </tr>
+                <tr>
+                  <td>편집 후 재사용</td>
+                  <td>간단한 메모에는 편하지만 시각 자료는 약함</td>
+                  <td>사람이 읽는 결과물로 재사용하기 쉬움</td>
+                </tr>
+                <tr>
+                  <td>모바일 읽기</td>
+                  <td>줄이 길어질수록 스크롤 비용이 커짐</td>
+                  <td>레이아웃을 조절해 시선 이동을 줄일 수 있음</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top:14px;">
+            글에서 반복되는 메시지는 단순합니다. <strong>사람이 실제로 읽게 만드는가?</strong>
+            Markdown은 빠르게 쓰기 좋지만, HTML은 오래 읽히는 형태를 만들기 좋습니다.
+          </p>
+        </section>
+
+        <section id="usecases">
+          <h2>3) 실제로 잘 맞는 작업들</h2>
+          <div class="artifact-grid">
+            <div class="artifact">
+              <div class="kicker">Specs / planning</div>
+              <p>
+                계획, 요건, 구현 방향을 한 번에 보여줘야 할 때 좋습니다.
+                여러 방향을 나란히 놓고 비교하거나, 일정·리스크·결정 사항을 분리해 보여줄 수 있습니다.
+              </p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">Code review</div>
+              <p>
+                diff, severity, 영향 범위, 데이터 흐름을 한 화면에 묶을 수 있습니다.
+                단순 요약보다 리뷰 패킷처럼 보여줘서 검토가 쉬워집니다.
+              </p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">Design / prototype</div>
+              <p>
+                HTML은 throwaway UI, 작은 인터랙션, 레이아웃 실험에 잘 맞습니다.
+                “문장으로 설명하기 어려운 것”을 직접 눌러볼 수 있게 해줍니다.
+              </p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">Reports / research</div>
+              <p>
+                긴 리서치 결과를 그냥 나열하지 말고, 관계와 구조가 보이도록 만듭니다.
+                읽는 사람이 다음 행동을 바로 떠올릴 수 있어야 합니다.
+              </p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">Learning / explainers</div>
+              <p>
+                개념 설명, 인과 구조, 단계별 예시를 섞을 때 HTML이 강합니다.
+                SVG, 색상, 콜아웃, 앵커 링크가 이해를 돕습니다.
+              </p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">Reusable context</div>
+              <p>
+                한 번 만든 artifact가 다음 세션에서도 살아남으면, 그것이 곧 작업 컨텍스트가 됩니다.
+                “읽고 끝”이 아니라 “다음에도 다시 쓰는” 문서가 됩니다.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="loop">
+          <h2>4) 인간을 루프 안에 두는 방식</h2>
+          <div class="card-grid">
+            <div class="card">
+              <div class="tag">읽는 사람 기준</div>
+              <p>
+                글의 중요한 포인트는 모델이 아니라 <strong>사람이 읽을지</strong>입니다.
+                HTML은 인간이 읽는 시각적 구조를 강화해 에이전트의 산출물을 더 믿을 수 있게 만듭니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">검토 가능한 산출물</div>
+              <p>
+                Claude Code는 파일 시스템, git history, MCP, 브라우저 맥락까지 읽을 수 있으므로
+                HTML artifact를 단순 결과물이 아니라 <strong>검토 대상</strong>으로 삼기 좋습니다.
+              </p>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:14px;">
+            <strong>핵심:</strong> 좋은 출력은 더 많은 토큰이 아니라,
+            인간이 더 적은 노력으로 이해할 수 있는 구조입니다.
+          </div>
+        </section>
+
+        <section id="decision">
+          <h2>5) 언제 HTML / 언제 Markdown</h2>
+          <div class="decision-grid">
+            <div class="decision">
+              <h4>HTML이 더 나은 경우</h4>
+              <ul>
+                <li>길고 구조가 복잡한 계획서</li>
+                <li>리뷰와 설명이 함께 필요한 PR</li>
+                <li>그래프, 표, 다이어그램이 중요한 설명</li>
+                <li>사람이 실제로 읽어야 하는 최종 산출물</li>
+                <li>인터랙션이 있으면 이해가 쉬워지는 경우</li>
+              </ul>
+            </div>
+            <div class="decision">
+              <h4>Markdown이 더 나은 경우</h4>
+              <ul>
+                <li>짧은 메모나 대화형 답변</li>
+                <li>사람이 직접 빠르게 수정할 텍스트</li>
+                <li>에이전트 내부 중간 산출물</li>
+                <li>단순한 체크리스트나 임시 노트</li>
+                <li>HTML까지는 과한 문제</li>
+              </ul>
+            </div>
+          </div>
+          <p style="margin-top:14px;">
+            요약하면, <strong>짧고 내부적인 건 Markdown</strong>, <strong>길고 읽히는 건 HTML</strong>입니다.
+            글은 Markdown을 없애자는 게 아니라, 포맷을 작업에 맞게 고르자는 쪽입니다.
+          </p>
+        </section>
+
+        <section id="prompts">
+          <h2>6) 바로 쓰는 프롬프트</h2>
+          <p>아래 프롬프트는 글의 정신을 실제 작업으로 옮긴 버전입니다.</p>
+
+          <div class="prompt">
+            <div class="prompt-header">
+              <h4>1) 계획을 HTML artifact로</h4>
+              <button class="copy-btn" data-copy-target="prompt-1">Copy</button>
+            </div>
+            <pre id="prompt-1">Create a single self-contained HTML artifact for this task.
+Make it readable in a browser, mobile-friendly, and easy to review.
+Include:
+- a high-level summary
+- a module map or system map
+- the proposed file changes
+- risks by severity
+- a staged plan
+- open questions
+- a copyable implementation prompt at the end</pre>
+          </div>
+
+          <div class="prompt" style="margin-top:14px;">
+            <div class="prompt-header">
+              <h4>2) PR 리뷰를 HTML로</h4>
+              <button class="copy-btn" data-copy-target="prompt-2">Copy</button>
+            </div>
+            <pre id="prompt-2">Help me review this PR by creating an HTML artifact that describes it.
+I'm not very familiar with the streaming/backpressure logic, so focus on that.
+Render the actual diff with inline annotations, color-code findings by severity,
+and include a small diagram of the data flow.</pre>
+          </div>
+
+          <div class="prompt" style="margin-top:14px;">
+            <div class="prompt-header">
+              <h4>3) 탐색용 HTML 브리프</h4>
+              <button class="copy-btn" data-copy-target="prompt-3">Copy</button>
+            </div>
+            <pre id="prompt-3">Before choosing an implementation, brainstorm three directions:
+1. the smallest safe change
+2. the architecture-clean change
+3. the fastest prototype
+For each, explain what we learn, what we might regret,
+and what the HTML artifact should show visually.</pre>
+          </div>
+
+          <div class="prompt" style="margin-top:14px;">
+            <div class="prompt-header">
+              <h4>4) 설명문 대신 상호작용</h4>
+              <button class="copy-btn" data-copy-target="prompt-4">Copy</button>
+            </div>
+            <pre id="prompt-4">I want to understand this better than a Markdown summary would allow.
+Create an HTML page with:
+- visual sections
+- inline annotations
+- a small interactive element or toggle where useful
+- direct links to the source material
+- a short takeaway at the top</pre>
+          </div>
+        </section>
+
+        <section id="gallery">
+          <h2>7) companion gallery에서 보이는 패턴</h2>
+          <p>
+            공개 예시 갤러리와 요약들을 보면, HTML artifact는 단순히 “예쁜 문서”가 아니라
+            작업의 형태를 바꾸는 도구로 쓰입니다.
+          </p>
+          <div class="card-grid">
+            <div class="card">
+              <div class="tag">브레인스토밍</div>
+              <p>
+                여러 방향을 나란히 놓고 비교하거나, 위험한 가정을 먼저 드러내는 형태.
+                “팬아웃해서 옆에 놓고 보자”는 패턴이 반복됩니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">구현 전 확인</div>
+              <p>
+                blindspot pass, 인터뷰, reference map처럼
+                구현 전에 모르는 것을 먼저 밝히는 파일이 있습니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">구현 계획</div>
+              <p>
+                변경 파일, 마이그레이션 순서, 리스크 테이블, 테스트 계획을
+                한 장으로 모아 검토하기 쉽게 만듭니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">변경 검증</div>
+              <p>
+                implementation notes, status report, quiz, triage board처럼
+                구현 후에도 HTML이 살아 있어야 한다는 점이 강조됩니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">리뷰 패킷</div>
+              <p>
+                diff + annotation + severity + diagrams를 섞어
+                “눈으로 바로 판단 가능한” 형식을 만듭니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="tag">학습/설명</div>
+              <p>
+                SVG, 인터랙션, 노트 구조를 활용해 개념을 시각화합니다.
+                설명을 읽는 대신 탐색하게 만듭니다.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>마지막 정리</h2>
+          <div class="hero">
+            <p style="margin-top:0;">
+              이 글은 HTML이 Markdown을 완전히 대체한다고 말하지 않습니다.
+              대신, Claude Code가 더 큰 작업을 다루기 시작한 지금은
+              <strong>작업의 표면을 더 풍부하게 만드는 포맷이 필요하다</strong>고 말합니다.
+            </p>
+            <p>
+              그래서 실제로는 이런 판단이 중요합니다:
+              <br />
+              <strong>짧고 단순한 건 Markdown</strong>, <strong>구조와 검토가 중요한 건 HTML</strong>.
+            </p>
+            <p style="margin-bottom:0;">
+              한마디로, HTML은 예쁜 출력이 아니라
+              <strong>사람과 에이전트가 함께 일하는 협업 인터페이스</strong>입니다.
+            </p>
+          </div>
+        </section>
+
+        <section id="sources" class="sources">
+          <h2>출처</h2>
+          <ul>
+            <li>
+              Claude blog:
+              <a href="https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html" target="_blank" rel="noreferrer noopener">
+                Using Claude Code: The unreasonable effectiveness of HTML
+              </a>
+            </li>
+            <li>
+              X post:
+              <a href="https://x.com/trq212/status/2052809885763747935" target="_blank" rel="noreferrer noopener">
+                Thariq on X
+              </a>
+            </li>
+            <li>
+              Companion gallery:
+              <a href="https://thariqs.github.io/html-effectiveness" target="_blank" rel="noreferrer noopener">
+                The unreasonable effectiveness of HTML — examples
+              </a>
+            </li>
+            <li>
+              Supporting summaries:
+              Simon Willison link post, Claude Code HTML artifact recap, and public talk summaries.
+            </li>
+          </ul>
+        </section>
+      </main>
+    </div>
+
+    <footer>
+      Oper Hermes Output · Mobile-first reading page
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var buttons = document.querySelectorAll('.copy-btn');
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', async function () {
+          var targetId = btn.getAttribute('data-copy-target');
+          var el = document.getElementById(targetId);
+          if (!el) return;
+          try {
+            await navigator.clipboard.writeText(el.innerText);
+            var prev = btn.textContent;
+            btn.textContent = 'Copied';
+            setTimeout(function () { btn.textContent = prev; }, 1200);
+          } catch (e) {
+            var range = document.createRange();
+            range.selectNodeContents(el);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            document.execCommand('copy');
+            sel.removeAllRanges();
+            var prevFallback = btn.textContent;
+            btn.textContent = 'Copied';
+            setTimeout(function () { btn.textContent = prevFallback; }, 1200);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
