@@ -8,61 +8,57 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
+    <style>
     :root {
-      --text: #24292f;
-      --secondary: #57606a;
-      --secondary-2: #3a4149;
-      --muted: #8b93a1;
-      --hairline: #e7eaef;
-      --hairline-2: #eceff2;
-      --hairline-3: #d0d7de;
-      --surface: #f6f8fa;
-      --surface-2: #f3f4f6;
-      --code-bg: #0d1117;
-      --code-fg: #c9d1d9;
-      --code-comment: #8b949e;
+      --bg: #f7f4ef;
+      --surface: rgba(255, 255, 255, 0.92);
+      --surface-strong: rgba(255, 255, 255, 0.98);
+      --border: rgba(148, 163, 184, 0.24);
+      --text: #111827;
+      --muted: #4b5563;
+      --soft: #6b7280;
       --accent: #2563eb;
-      --accent-2: #0f766e;
-      --accent-3: #7c3aed;
+      --accent-2: #0891b2;
+      --accent-3: #16a34a;
+      --warning: #b45309;
+      --shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 10px 24px rgba(15, 23, 42, 0.06);
+      --code-bg: #0f172a;
     }
 
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       color: var(--text);
-      background: #eef1f5;
-      font-size: 15px;
-      line-height: 1.65;
-      -webkit-font-smoothing: antialiased;
-      padding: 0;
-      margin: 0;
+      line-height: 1.75;
+      overflow-x: clip;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 28%),
+        radial-gradient(circle at top right, rgba(8, 145, 178, 0.08), transparent 26%),
+        linear-gradient(180deg, #fffdf9 0%, var(--bg) 100%);
+      padding: clamp(12px, 2.4vw, 24px);
     }
 
-    img, svg, video, iframe, object, embed {
-      max-width: 100%;
-      height: auto;
+    img, svg, video, iframe, object, embed { max-width: 100%; height: auto; }
+    h1, h2, h3, h4, p, li, a, code, pre, td, th, .badge, .pill { overflow-wrap: anywhere; word-break: break-word; }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.34), rgba(255,255,255,0.34)),
+        linear-gradient(90deg, rgba(148,163,184,0.06) 1px, transparent 1px),
+        linear-gradient(rgba(148,163,184,0.06) 1px, transparent 1px);
+      background-size: auto, 48px 48px, 48px 48px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.14), transparent 82%);
     }
 
-    h1, h2, h3, h4, p, li, a, code, pre, td, th, .badge, .pill {
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-
-    .container {
-      max-width: 760px;
-      margin: 40px auto;
-      background: #ffffff;
-      border: 1px solid var(--hairline);
-      border-radius: 10px;
-      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.06);
-      padding: 64px 72px;
-      position: relative;
-      z-index: 1;
-    }
+    .container { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; }
 
     .nav-back {
       display: inline-flex;
@@ -70,468 +66,110 @@
       gap: 8px;
       color: var(--muted);
       text-decoration: none;
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      margin-bottom: 8px;
-      letter-spacing: 0.2px;
+      font-size: 14px;
+      margin-bottom: 18px;
     }
     .nav-back:hover { color: var(--accent); }
 
-    .page-actions {
-      display: flex;
-      justify-content: center;
-      margin: 28px 0 0;
-    }
-
+    .page-actions { display: flex; justify-content: center; margin: 28px 0 0; }
     .home-btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      min-height: 34px;
+      min-height: 36px;
       padding: 0 12px;
-      border-radius: 4px;
-      border: 1px solid var(--hairline-3);
-      background: var(--surface-2);
-      color: var(--text);
+      border-radius: 999px;
+      border: 1px solid rgba(37, 99, 235, 0.22);
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--accent);
       text-decoration: none;
       font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-    }
-
-    .home-btn:hover { background: #fff; }
-
-    header {
-      text-align: center;
-      margin-bottom: 18px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 14px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      min-height: 28px;
-      padding: 0 10px;
-      border-radius: 4px;
-      border: 1px solid var(--hairline-3);
-      background: var(--surface-2);
-      font-size: 11px;
-      color: var(--secondary);
-      white-space: nowrap;
-    }
-
-    header h1 {
-      margin: 6px 0 2px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 30px;
-      line-height: 1.08;
-      letter-spacing: -0.5px;
-    }
-
-    header p {
-      margin: 0 0 28px;
-      color: var(--secondary);
-      font-size: 15px;
-    }
-
-    .layout {
-      display: block;
-    }
-
-    .sidebar,
-    .content,
-    .hero,
-    .card,
-    .callout,
-    .prompt,
-    .quote,
-    .decision,
-    .artifact,
-    .table-wrap,
-    .note {
-      background: var(--surface);
-      border: 1px solid var(--hairline);
-      border-radius: 6px;
-      box-shadow: none;
-    }
-
-    .sidebar {
-      position: static;
-      top: auto;
-      padding: 16px 16px 12px;
-      margin-bottom: 16px;
-    }
-    .sidebar h2 {
-      margin: 0 0 10px;
-      font-size: 12px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .toc {
-      display: grid;
-      gap: 8px;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .toc a {
-      display: block;
-      padding: 8px 10px;
-      border-radius: 4px;
-      text-decoration: none;
-      color: var(--secondary);
-      background: var(--surface-2);
-      border: 1px solid var(--hairline-2);
-      line-height: 1.35;
       font-size: 13px;
     }
-    .toc a:hover {
-      color: var(--accent);
-      border-color: rgba(37, 99, 235, 0.18);
-      background: rgba(37, 99, 235, 0.05);
-    }
+    .home-btn:hover { background: rgba(37, 99, 235, 0.12); }
 
-    .content {
-      padding: 0;
-      border: none;
-      background: transparent;
+    header { text-align: center; margin-bottom: 18px; }
+    .eyebrow { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 14px; }
+    .badge {
+      display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 999px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.84); box-shadow: var(--shadow-soft);
+      font-size: 12px; color: var(--muted); white-space: nowrap;
     }
+    header h1 { margin: 0; font-size: clamp(30px, 5.8vw, 54px); line-height: 1.08; letter-spacing: -0.04em; }
+    header p { margin: 14px auto 0; max-width: 920px; color: var(--muted); font-size: 16px; }
 
-    section { margin-bottom: 24px; }
-    h2 {
-      margin: 0 0 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--muted);
-      border-top: 1px solid var(--hairline);
-      padding-top: 20px;
+    .layout { display: grid; grid-template-columns: minmax(250px, 300px) minmax(0, 1fr); gap: 22px; align-items: start; }
+    .sidebar, .content, .hero, .card, .callout, .prompt, .quote, .decision, .artifact, .table-wrap, .note {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 22px; box-shadow: var(--shadow-soft); backdrop-filter: blur(12px);
     }
-    h3 {
-      margin: 0 0 8px;
-      font-size: 18px;
-      line-height: 1.3;
-      letter-spacing: -0.01em;
-    }
+    .sidebar { position: sticky; top: 18px; padding: 18px; }
+    .sidebar h2 { margin: 0 0 10px; font-size: 15px; color: var(--text); }
+    .toc { display: grid; gap: 8px; }
+    .toc a { display: block; padding: 9px 11px; border-radius: 12px; text-decoration: none; color: var(--muted); background: rgba(255,255,255,0.6); border: 1px solid transparent; line-height: 1.35; }
+    .toc a:hover { color: var(--accent); border-color: rgba(37, 99, 235, 0.18); background: rgba(37, 99, 235, 0.05); }
+    .content { padding: 28px; }
+    section { margin-bottom: 34px; }
+    h2 { margin: 0 0 12px; font-size: 24px; line-height: 1.25; letter-spacing: -0.02em; }
+    h3 { margin: 0 0 8px; font-size: 18px; line-height: 1.3; letter-spacing: -0.01em; }
     p, li { color: var(--muted); }
     ul, ol { padding-left: 22px; }
     li { margin-bottom: 6px; }
-
-    .hero {
-      padding: 0;
-      margin-bottom: 16px;
-      background: transparent;
-      border: none;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      align-items: stretch;
-    }
-
+    .hero { padding: 20px; margin-bottom: 16px; background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.96)); }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr); gap: 16px; align-items: stretch; }
     .hero-text p { margin: 0 0 12px; }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      min-height: 28px;
-      padding: 0 10px;
-      border-radius: 4px;
-      border: 1px solid var(--hairline-3);
-      background: var(--surface-2);
-      font-size: 12px;
-      color: var(--secondary);
-      white-space: nowrap;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .quote {
-      margin-top: 0;
-      padding: 12px 14px;
-      border-left: 3px solid var(--secondary);
-      background: var(--surface);
-      border-radius: 0 6px 6px 0;
-    }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill { display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255,255,255,0.72); font-size: 13px; color: var(--muted); white-space: nowrap; }
+    .quote { margin-top: 0; padding: 18px 20px; border-left: 5px solid var(--accent); background: rgba(37, 99, 235, 0.06); border-radius: 0 18px 18px 0; }
     .quote strong { color: var(--text); }
     .quote small { display: block; margin-top: 8px; color: var(--soft); }
-
-    .card-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
-    .card {
-      padding: 14px 16px;
-      background: var(--surface);
-    }
-    .card .tag {
-      display: inline-block;
-      margin-bottom: 10px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--secondary);
-    }
+    .card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .card { padding: 18px; background: var(--surface-strong); }
+    .card .tag { display: inline-block; margin-bottom: 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
     .card p { margin: 0; }
-
-    .artifact {
-      padding: 14px 16px;
-      background: var(--surface);
-    }
-    .artifact + .artifact { margin-top: 12px; }
-    .artifact-head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-    .artifact-head h3 { margin: 0; }
-    .artifact-meta {
-      font-size: 12px;
-      color: var(--soft);
-      white-space: nowrap;
-    }
-
-    .note {
-      padding: 14px 16px;
-      background: var(--surface);
-      margin-bottom: 14px;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      background: var(--surface);
-      margin-top: 12px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 620px;
-      font-size: 13.5px;
-    }
-    thead tr { border-bottom: 1px solid var(--hairline-3); }
-    th {
-      text-align: left;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
-      color: var(--muted);
-      font-weight: 600;
-      padding: 10px 12px;
-      background: var(--surface-2);
-    }
-    td {
-      vertical-align: top;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--hairline-2);
-    }
-    tr:last-child td { border-bottom: none; }
-
-    .code-block,
-    pre {
-      margin: 0;
-      background: var(--code-bg);
-      color: var(--code-fg);
-      border-radius: 6px;
-      padding: 16px 18px;
-      overflow: auto;
-      font-size: 12.5px;
-      line-height: 1.7;
-      font-family: 'JetBrains Mono', monospace;
-      box-shadow: none;
-    }
-
-    .code-shell {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin: 0;
-    }
-
-    .code-shell + .code-shell {
-      margin-top: 14px;
-    }
-
-    .copy-btn {
-      align-self: flex-end;
-      min-height: 28px;
-      padding: 0 8px;
-      border-radius: 4px;
-      border: 1px solid var(--hairline-3);
-      background: var(--surface-2);
-      color: var(--secondary);
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      cursor: pointer;
-    }
-
-    .copy-btn:hover { background: #fff; }
-    .copy-btn:active { transform: translateY(1px); }
-    .copy-btn.copied { background: rgba(15, 118, 110, 0.10); color: var(--accent-2); }
-
-    code.inline {
-      background: rgba(15, 23, 42, 0.06);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      padding: 1px 6px;
-      border-radius: 6px;
-      color: #0f172a;
-      font-size: 0.95em;
-    }
-
-    .prompt {
-      padding: 18px;
-      background: var(--surface-strong);
-    }
-    .prompt h3 { margin-bottom: 10px; }
-    .prompt .label {
-      display: inline-flex;
-      align-items: center;
-      min-height: 30px;
-      padding: 0 10px;
-      border-radius: 999px;
-      background: rgba(15, 118, 110, 0.08);
-      color: var(--accent-2);
-      border: 1px solid rgba(15, 118, 110, 0.16);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-
-    .skill-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    .skill-card {
-      background: var(--surface-strong);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: var(--shadow-soft);
-    }
-    .skill-card h3 {
-      margin: 0 0 8px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .skill-badge {
-      display: inline-flex;
-      align-items: center;
-      min-height: 28px;
-      padding: 0 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      color: var(--accent);
-      background: rgba(37, 99, 235, 0.08);
-      border: 1px solid rgba(37, 99, 235, 0.14);
-      white-space: nowrap;
-    }
+    .skill-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .skill-card { background: var(--surface-strong); border: 1px solid var(--border); border-radius: 18px; padding: 18px; box-shadow: var(--shadow-soft); }
+    .skill-card h3 { margin: 0 0 8px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .skill-badge { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 999px; font-size: 12px; color: var(--accent); background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.14); white-space: nowrap; }
     .skill-card p { margin: 0 0 10px; }
     .skill-card ul { margin: 0; }
-
-    .steps {
-      display: grid;
-      gap: 14px;
-      counter-reset: steps;
-    }
-    .step {
-      display: grid;
-      grid-template-columns: 44px minmax(0, 1fr);
-      gap: 14px;
-      align-items: start;
-      padding: 16px 18px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.94);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-soft);
-    }
-    .step::before {
-      counter-increment: steps;
-      content: counter(steps);
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(124,58,237,0.12));
-      color: var(--accent);
-      font-weight: 800;
-      flex: 0 0 auto;
-    }
-    .step h3 { margin: 0 0 6px; }
-    .step p { margin: 0; }
-
-    .faq-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    .faq {
-      padding: 18px;
-      background: var(--surface-strong);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      box-shadow: var(--shadow-soft);
-    }
-    .faq h3 { margin: 0 0 8px; }
-    .faq p { margin: 0; }
-
-    footer {
-      margin-top: 18px;
-      color: var(--soft);
-      font-size: 13px;
-      text-align: center;
-    }
-
-    @media (max-width: 960px) {
-      .container { margin: 20px auto; padding: 28px 20px; }
-      .toc { grid-template-columns: 1fr; }
-      .table-wrap table { min-width: 620px; }
-    }
-
-    @media (max-width: 640px) {
-      .container { margin: 0; border: none; border-radius: 0; box-shadow: none; padding: 20px 16px 24px; }
-      header p { font-size: 14px; }
-      .pill-row { gap: 6px; }
-      .pill { white-space: normal; }
-      .table-wrap { margin-left: -16px; margin-right: -16px; border-radius: 0; }
-      .table-wrap table { min-width: 760px; }
-    }
-
-    @media print {
-      body { background: #fff; padding: 0; }
-      .sidebar, .nav-back { display: none; }
-      .content, .hero, .card, .skill-card, .faq, .step, .note, .artifact, .prompt { box-shadow: none; }
-      .content { padding: 0; }
-    }
+    .artifact-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .artifact { padding: 18px; background: var(--surface-strong); }
+    .artifact .kicker { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 999px; background: rgba(8, 145, 178, 0.08); color: #0e7490; font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+    .artifact p { margin: 0; }
+    .decision-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .decision { padding: 18px; background: var(--surface-strong); }
+    .decision h4 { margin: 0 0 10px; font-size: 16px; color: var(--text); }
+    .decision ul { margin: 0; }
+    .table-wrap { overflow-x: auto; background: var(--surface-strong); margin-top: 12px; }
+    table { width: 100%; border-collapse: collapse; min-width: 620px; font-size: 13.5px; }
+    thead tr { border-bottom: 1px solid rgba(148,163,184,0.2); }
+    th { text-align: left; font-size: 12px; color: var(--soft); text-transform: uppercase; letter-spacing: 0.08em; padding: 14px 16px; background: rgba(248, 250, 252, 0.9); }
+    td { vertical-align: top; padding: 14px 16px; border-bottom: 1px solid rgba(148,163,184,0.14); }
+    tr:last-child td { border-bottom: none; }
+    .note { padding: 16px 18px; background: rgba(255,255,255,0.94); margin-bottom: 14px; }
+    .prompt { padding: 18px; background: var(--surface-strong); }
+    .prompt h3 { margin-bottom: 10px; }
+    .label { display: inline-flex; align-items: center; min-height: 30px; padding: 0 10px; border-radius: 999px; background: rgba(15,118,110,0.08); color: var(--accent-2); border: 1px solid rgba(15,118,110,0.16); font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 10px; }
+    .code-shell { display: flex; flex-direction: column; gap: 8px; margin: 0; }
+    .copy-btn { align-self: flex-end; min-height: 28px; padding: 0 8px; border-radius: 4px; border: 1px solid var(--border); background: rgba(255,255,255,0.78); color: var(--muted); font-size: 11px; cursor: pointer; font-family: inherit; }
+    .copy-btn:hover { background: #fff; }
+    .copy-btn:active { transform: translateY(1px); }
+    .copy-btn.copied { background: rgba(15,118,110,0.10); color: var(--accent-2); }
+    .code-block, pre { margin: 0; background: var(--code-bg); color: #e5e7eb; border-radius: 16px; padding: 16px 18px; overflow: auto; font-size: 14px; line-height: 1.65; box-shadow: inset 0 1px 0 rgba(255,255,255,0.04); white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; }
+    code.inline { background: rgba(15, 23, 42, 0.08); border: 1px solid rgba(148, 163, 184, 0.18); padding: 1px 6px; border-radius: 6px; color: #0f172a; font-size: 0.95em; }
+    .steps { display: grid; gap: 14px; counter-reset: steps; }
+    .step { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; align-items: start; padding: 16px 18px; border-radius: 18px; background: rgba(255,255,255,0.94); border: 1px solid var(--border); box-shadow: var(--shadow-soft); }
+    .step::before { counter-increment: steps; content: counter(steps); width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: var(--accent); background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.14); }
+    .step h3 { margin-top: 0; }
+    .step p { margin-bottom: 0; }
+    .sources a { color: var(--accent); text-decoration: none; }
+    .sources a:hover { text-decoration: underline; }
+    footer { margin-top: 24px; text-align: center; color: var(--soft); font-size: 13px; }
+    .mobile-toc { display: none; gap: 8px; overflow-x: auto; padding: 2px 0 4px; margin: 0 0 16px; -webkit-overflow-scrolling: touch; }
+    .mobile-toc a { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255,255,255,0.78); color: var(--muted); text-decoration: none; font-size: 13px; white-space: nowrap; }
+    .mobile-toc a:hover { color: var(--accent); }
+    @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } .sidebar { position: static; } .hero-grid { grid-template-columns: 1fr; } .artifact-grid { grid-template-columns: 1fr 1fr; } .card-grid, .decision-grid, .skill-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) { body { padding: 16px; } header p { font-size: 15px; } .content { padding: 18px; } .hero { padding: 16px; } .sidebar { display: none; } .mobile-toc { display: flex; } h2 { font-size: 21px; } .card, .decision, .artifact, .callout, .prompt, .skill-card, .note { padding: 16px; } .artifact-grid { grid-template-columns: 1fr; } .table-wrap { overflow-x: visible; } table { min-width: 0; width: 100%; table-layout: fixed; } th, td { padding: 10px 12px; font-size: 13px; } pre { padding: 14px 15px; font-size: 13px; } }
   </style>
 </head>
 <body>
@@ -553,6 +191,16 @@
         바로 복사해 쓸 수 있게 정리했습니다.
       </p>
     </header>
+
+    <nav class="mobile-toc" aria-label="모바일 목차">
+      <a href="#overview">1. 저장소 한눈에 보기</a>
+      <a href="#structure">2. 저장소 구조</a>
+      <a href="#skills">3. 스킬별 설명</a>
+      <a href="#examples">4. 활용 예시</a>
+      <a href="#workflow">5. 추천 사용 흐름</a>
+      <a href="#install">6. 설치 방법</a>
+      <a href="#faq">7. 자주 묻는 점</a>
+    </nav>
 
     <div class="layout">
       <aside class="sidebar" aria-label="목차">
@@ -721,57 +369,72 @@
           <article class="prompt">
             <div class="label">예시 1 · emil-design-eng</div>
             <h3>UI 리뷰를 맡기고 싶을 때</h3>
-            <div class="code-shell"><button class="copy-btn" type="button">Copy</button><pre class="code-block">이 화면의 버튼, 카드, 진입 애니메이션을 Emil Kowalski 관점에서 리뷰해줘.
+            <div class="code-shell">
+              <button class="copy-btn" type="button">Copy</button>
+              <pre class="code-block">이 화면의 버튼, 카드, 진입 애니메이션을 Emil Kowalski 관점에서 리뷰해줘.
 특히 다음을 봐줘:
 - 버튼 press feedback이 자연스러운지
 - shadow와 border가 너무 무겁지 않은지
 - scale / opacity / easing이 상호작용 빈도에 맞는지
 
-문제점이 있으면 왜 문제인지, 어떤 방식으로 수정할지 짚어줘.</pre></div>
+문제점이 있으면 왜 문제인지, 어떤 방식으로 수정할지 짚어줘.</pre>
+            </div>
           </article>
 
           <article class="prompt" style="margin-top:14px;">
             <div class="label">예시 2 · review-animations</div>
             <h3>애니메이션 diff 리뷰를 맡기고 싶을 때</h3>
-            <div class="code-shell"><button class="copy-btn" type="button">Copy</button><pre class="code-block">아래 diff의 애니메이션만 리뷰해줘.
+            <div class="code-shell">
+              <button class="copy-btn" type="button">Copy</button>
+              <pre class="code-block">아래 diff의 애니메이션만 리뷰해줘.
 - enter / exit timing
 - easing curve 선택
 - keyframe의 시작/종료 상태
 - 성능 상 GPU 친화적인지
 
-애매하면 승인보다 지적 위주로, 수정 우선순위도 같이 줘.</pre></div>
+애매하면 승인보다 지적 위주로, 수정 우선순위도 같이 줘.</pre>
+            </div>
           </article>
 
           <article class="prompt" style="margin-top:14px;">
             <div class="label">예시 3 · improve-animations</div>
             <h3>코드베이스 전체 점검과 개선 계획이 필요할 때</h3>
-            <div class="code-shell"><button class="copy-btn" type="button">Copy</button><pre class="code-block">이 저장소의 애니메이션을 전체적으로 점검해서,
+            <div class="code-shell">
+              <button class="copy-btn" type="button">Copy</button>
+              <pre class="code-block">이 저장소의 애니메이션을 전체적으로 점검해서,
 1) 가장 큰 문제 5개를 우선순위로 정리하고
 2) 각 항목을 다른 에이전트가 실행할 수 있게
    파일 경로, 수정 포인트, 기대 효과가 포함된 계획으로 작성해줘.
 
-직접 수정하지 말고 계획만 써줘.</pre></div>
+직접 수정하지 말고 계획만 써줘.</pre>
+            </div>
           </article>
 
           <article class="prompt" style="margin-top:14px;">
             <div class="label">예시 4 · animation-vocabulary</div>
             <h3>효과 이름이 생각 안 날 때</h3>
-            <div class="code-shell"><button class="copy-btn" type="button">Copy</button><pre class="code-block">"버튼이 살짝 튀어 오르면서 나타나는 그 느낌"을
+            <div class="code-shell">
+              <button class="copy-btn" type="button">Copy</button>
+              <pre class="code-block">"버튼이 살짝 튀어 오르면서 나타나는 그 느낌"을
 디자인/모션 용어로 뭐라고 부르는지 알려줘.
 가능하면 가장 가까운 용어를 우선 제시하고,
-비슷한 대안이 있으면 차이도 짚어줘.</pre></div>
+비슷한 대안이 있으면 차이도 짚어줘.</pre>
+            </div>
           </article>
 
           <article class="prompt" style="margin-top:14px;">
             <div class="label">예시 5 · apple-design</div>
             <h3>Apple 스타일의 자연스러운 인터랙션을 만들고 싶을 때</h3>
-            <div class="code-shell"><button class="copy-btn" type="button">Copy</button><pre class="code-block">드래그 가능한 bottom sheet를 Apple 스타일에 가깝게 설계하고 싶어.
+            <div class="code-shell">
+              <button class="copy-btn" type="button">Copy</button>
+              <pre class="code-block">드래그 가능한 bottom sheet를 Apple 스타일에 가깝게 설계하고 싶어.
 - pointer-down에서 즉시 반응
 - velocity를 살린 스프링 전환
 - 중간에 방향 전환 가능
 - reduced motion 대응
 
-웹 구현 기준으로 설계 원칙과 코드 힌트를 정리해줘.</pre></div>
+웹 구현 기준으로 설계 원칙과 코드 힌트를 정리해줘.</pre>
+            </div>
           </article>
         </section>
 

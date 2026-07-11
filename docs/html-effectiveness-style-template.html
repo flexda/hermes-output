@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML Effectiveness Style Template</title>
+  <meta name="description" content="Using Claude Code 스타일에서 추출한 HTML 문서 템플릿. 폭, 타이포, 카드, TOC, copy 버튼, 모바일 대응 규칙을 재사용하기 위한 기준 문서." />
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --surface: rgba(255,255,255,0.92);
+      --surface-strong: rgba(255,255,255,0.98);
+      --border: rgba(148,163,184,0.24);
+      --text: #111827;
+      --muted: #4b5563;
+      --soft: #6b7280;
+      --accent: #2563eb;
+      --accent-2: #0891b2;
+      --shadow-soft: 0 10px 24px rgba(15,23,42,0.06);
+      --code-bg: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,0.08), transparent 28%),
+        radial-gradient(circle at top right, rgba(8,145,178,0.08), transparent 26%),
+        linear-gradient(180deg, #fffdf9 0%, var(--bg) 100%);
+      padding: clamp(12px, 2.4vw, 24px);
+      overflow-x: clip;
+    }
+    h1,h2,h3,h4,p,li,a,code,pre,td,th { overflow-wrap:anywhere; word-break:break-word; }
+    .container { max-width: 1180px; margin: 0 auto; position: relative; z-index: 1; }
+    .layout { display:grid; grid-template-columns: minmax(250px, 300px) minmax(0,1fr); gap:22px; align-items:start; }
+    .sidebar,.content,.hero,.card,.prompt,.quote,.artifact,.decision,.table-wrap,.note { background:var(--surface); border:1px solid var(--border); border-radius:22px; box-shadow:var(--shadow-soft); backdrop-filter: blur(12px); }
+    .sidebar { position:sticky; top:18px; padding:18px; }
+    .sidebar h2 { margin:0 0 10px; font-size:15px; }
+    .toc { display:grid; gap:8px; }
+    .toc a { display:block; padding:9px 11px; border-radius:12px; text-decoration:none; color:var(--muted); background:rgba(255,255,255,0.6); border:1px solid transparent; }
+    .toc a:hover { color:var(--accent); border-color:rgba(37,99,235,0.18); background:rgba(37,99,235,0.05); }
+    .content { padding:28px; }
+    h2 { margin:0 0 12px; font-size:24px; line-height:1.25; letter-spacing:-0.02em; }
+    .hero { padding:20px; }
+    .hero-grid { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(260px,0.75fr); gap:16px; }
+    .pill-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .pill { display:inline-flex; align-items:center; min-height:34px; padding:0 12px; border-radius:999px; border:1px solid var(--border); background:rgba(255,255,255,0.72); font-size:13px; color:var(--muted); }
+    .quote { padding:18px 20px; border-left:5px solid var(--accent); background:rgba(37,99,235,0.06); border-radius:0 18px 18px 0; }
+    .card-grid, .artifact-grid, .decision-grid { display:grid; gap:14px; }
+    .card-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .artifact-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .decision-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .card,.artifact,.decision { padding:18px; background:var(--surface-strong); }
+    .label { display:inline-flex; align-items:center; min-height:30px; padding:0 10px; border-radius:999px; background:rgba(15,118,110,0.08); color:var(--accent-2); border:1px solid rgba(15,118,110,0.16); font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:10px; }
+    .code-shell { display:flex; flex-direction:column; gap:8px; }
+    .copy-btn { align-self:flex-end; min-height:28px; padding:0 8px; border-radius:4px; border:1px solid var(--border); background:rgba(255,255,255,0.78); color:var(--muted); font-size:11px; cursor:pointer; }
+    pre { margin:0; background:var(--code-bg); color:#e5e7eb; border-radius:16px; padding:16px 18px; overflow:auto; white-space:pre-wrap; word-break:break-word; overflow-wrap:anywhere; }
+    .mobile-toc { display:none; gap:8px; overflow-x:auto; margin:0 0 16px; }
+    .mobile-toc a { flex:0 0 auto; display:inline-flex; align-items:center; min-height:34px; padding:0 12px; border-radius:999px; border:1px solid var(--border); background:rgba(255,255,255,0.78); color:var(--muted); text-decoration:none; }
+    @media (max-width: 960px) { .layout { grid-template-columns:1fr; } .sidebar { position:static; } .hero-grid { grid-template-columns:1fr; } .artifact-grid { grid-template-columns:1fr 1fr; } .card-grid, .decision-grid { grid-template-columns:1fr; } }
+    @media (max-width: 640px) { .sidebar { display:none; } .mobile-toc { display:flex; } .content { padding:18px; } .hero { padding:16px; } .artifact-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="mobile-toc" aria-label="모바일 목차">
+      <a href="#overview">Overview</a>
+      <a href="#cards">Cards</a>
+      <a href="#prompts">Prompts</a>
+      <a href="#responsive">Responsive</a>
+    </nav>
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>Template rules</h2>
+        <nav class="toc">
+          <a href="#overview">1. Wide readable canvas</a>
+          <a href="#cards">2. Card rhythm</a>
+          <a href="#prompts">3. Copyable prompts</a>
+          <a href="#responsive">4. Mobile behavior</a>
+        </nav>
+      </aside>
+      <main class="content">
+        <section class="hero" id="overview">
+          <h2>HTML Effectiveness style template</h2>
+          <div class="quote">A reusable base for long-form HTML docs that need clear hierarchy, wide canvas, and mobile-friendly reading.</div>
+        </section>
+        <section id="cards">
+          <h2>Card pattern</h2>
+          <div class="card-grid">
+            <div class="card"><div class="label">overview</div><p>Use a concise hero and a few supporting cards.</p></div>
+            <div class="card"><div class="label">structure</div><p>Prefer wide spacing and soft borders over dense chrome.</p></div>
+          </div>
+        </section>
+        <section id="prompts">
+          <h2>Prompt pattern</h2>
+          <div class="prompt">
+            <div class="label">copyable</div>
+            <div class="code-shell"><button class="copy-btn" type="button">Copy</button><pre>Put the button outside the code block.
+Keep the code readable.
+Keep the page easy to scan.</pre></div>
+          </div>
+        </section>
+        <section id="responsive">
+          <h2>Responsive rules</h2>
+          <div class="decision-grid">
+            <div class="decision"><h3>Desktop</h3><p>Sticky TOC, centered canvas, wide sections.</p></div>
+            <div class="decision"><h3>Mobile</h3><p>Collapse to one column and show compact TOC chips.</p></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
