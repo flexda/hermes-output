@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spec-Driven Production Grade Development in the Age of Vibe Coding</title>
+  <meta name="description" content="Day5-spec-driven-production.pdf를 원문 흐름에 맞춰 재구성한 HTML 읽기판. 명세, 실행 모드, MCP, 팀 운영, 안전망을 긴 호흡으로 읽을 수 있게 정리했다." />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --paper: #f8fafc;
+      --surface: rgba(255,255,255,.92);
+      --surface-strong: rgba(255,255,255,.98);
+      --border: rgba(15, 23, 42, .12);
+      --text: #0f172a;
+      --muted: #475569;
+      --soft: #64748b;
+      --accent: #2563eb;
+      --accent-2: #0f766e;
+      --accent-3: #7c3aed;
+      --warn: #b45309;
+      --good: #15803d;
+      --shadow: 0 20px 60px rgba(15, 23, 42, .08);
+      --shadow-soft: 0 10px 24px rgba(15, 23, 42, .06);
+      --code-bg: #0b1120;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.06), transparent 30%),
+        radial-gradient(circle at top right, rgba(124,58,237,.06), transparent 28%),
+        linear-gradient(180deg, #fff 0%, var(--paper) 100%);
+      line-height: 1.72;
+      padding: clamp(12px, 2.4vw, 24px);
+      overflow-x: clip;
+    }
+
+    img, svg, video, iframe { max-width: 100%; height: auto; }
+    h1, h2, h3, p, li, a, td, th, code, pre, .badge, .chip, .tab-btn { overflow-wrap: anywhere; word-break: break-word; }
+
+    .container { max-width: 1280px; margin: 0 auto; position: relative; z-index: 1; }
+    .home-row { display: flex; justify-content: flex-start; margin-bottom: 14px; }
+    .home-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      min-height: 40px; padding: 0 14px; border-radius: 999px;
+      border: 1px solid rgba(37,99,235,.18); background: rgba(255,255,255,.9);
+      color: var(--accent); text-decoration: none; font-weight: 700; font-size: 13px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: clamp(20px, 4vw, 34px);
+      margin-bottom: 16px;
+      backdrop-filter: blur(12px);
+    }
+    .eyebrow { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .badge {
+      display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px;
+      border-radius: 999px; background: rgba(255,255,255,.8); border: 1px solid var(--border);
+      color: var(--muted); font-size: 12px; font-weight: 700;
+    }
+    header h1 {
+      margin: 0;
+      font-size: clamp(30px, 5.7vw, 56px);
+      line-height: 1.04;
+      letter-spacing: -0.05em;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr);
+      gap: 18px;
+      align-items: start;
+      margin-top: 14px;
+    }
+    .hero-copy p { margin: 12px 0 0; max-width: 920px; color: var(--muted); font-size: 16px; }
+    .metric-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+    .metric {
+      background: rgba(248,250,252,.95);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow-soft);
+    }
+    .metric strong { display: block; font-size: 18px; margin-bottom: 3px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .hero-quote {
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.96));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+    .hero-quote .label { display: inline-flex; min-height: 28px; align-items: center; padding: 0 10px; border-radius: 999px; background: rgba(37,99,235,.08); color: var(--accent); font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+    .hero-quote p { margin: 0; color: var(--muted); font-size: 15px; }
+    .hero-quote small { display: block; margin-top: 10px; color: var(--soft); }
+
+    .layout { display: grid; grid-template-columns: minmax(260px, 300px) minmax(0, 1fr); gap: 20px; align-items: start; }
+    .sidebar, .content, .panel, .card, .note, .callout, .table-box, .quote, .artifact, .decision, .prompt, .summary-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+    }
+    .sidebar { position: sticky; top: 18px; padding: 18px; }
+    .sidebar h2, .section h2 { margin: 0 0 10px; letter-spacing: -0.02em; }
+    .sidebar h2 { font-size: 16px; }
+    .section h2 { font-size: 24px; line-height: 1.2; }
+    .toc { display: grid; gap: 8px; }
+    .toc a {
+      display: block; padding: 10px 12px; border-radius: 12px; text-decoration: none;
+      color: var(--muted); border: 1px solid transparent; background: rgba(255,255,255,.6);
+      line-height: 1.35;
+    }
+    .toc a:hover { color: var(--accent); border-color: rgba(37,99,235,.18); background: rgba(37,99,235,.05); }
+
+    .content { padding: 24px; }
+    section { margin-bottom: 28px; }
+    .mobile-toc { display: none; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 0 14px; padding-bottom: 4px; }
+    .mobile-toc a {
+      flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px;
+      border-radius: 999px; text-decoration: none; color: var(--muted); background: rgba(255,255,255,.8);
+      border: 1px solid var(--border); white-space: nowrap; font-size: 13px;
+    }
+
+    .panel { padding: 18px; }
+    .panel-top { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+    .panel-top h3 { margin: 0; font-size: 18px; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tab-btn {
+      min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border);
+      background: rgba(255,255,255,.84); color: var(--muted); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    .tab-btn.active { color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-3)); border-color: transparent; }
+    .density-row { display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 10px; align-items: center; margin-top: 12px; }
+    .density-row label { font-size: 13px; color: var(--soft); }
+    input[type="range"] { width: 100%; accent-color: var(--accent); }
+    .density-label { min-width: 92px; text-align: right; font-size: 13px; color: var(--soft); }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+
+    .card, .note, .callout, .artifact, .decision, .prompt, .summary-box { padding: 18px; background: var(--surface-strong); }
+    .card h3, .artifact h3, .decision h3, .prompt h3, .summary-box h3 { margin: 0 0 10px; font-size: 18px; }
+    .card p, .artifact p, .decision p, .prompt p, .note p, .callout p, .summary-box p, .summary-box li { margin-top: 0; color: var(--muted); }
+    .kicker {
+      display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 999px;
+      background: rgba(15,118,110,.08); border: 1px solid rgba(15,118,110,.14); color: var(--accent-2);
+      font-size: 12px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .04em;
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      display: inline-flex; align-items: center; min-height: 30px; padding: 0 10px; border-radius: 999px;
+      background: rgba(37,99,235,.08); border: 1px solid rgba(37,99,235,.14); color: var(--accent); font-size: 12px; font-weight: 700;
+    }
+    .chip.alt { background: rgba(15,118,110,.08); border-color: rgba(15,118,110,.14); color: var(--accent-2); }
+    .chip.gray { background: rgba(148,163,184,.12); border-color: rgba(148,163,184,.18); color: var(--soft); }
+
+    .quote {
+      padding: 18px;
+      border-left: 5px solid var(--accent);
+      background: rgba(37,99,235,.05);
+    }
+    .quote strong { display: block; margin-bottom: 8px; }
+    .quote p { margin: 0; color: var(--muted); }
+    .quote small { display: block; margin-top: 10px; color: var(--soft); }
+    .callout {
+      border-left: 4px solid var(--good);
+      background: rgba(21,128,61,.05);
+    }
+    .callout strong { display: block; margin-bottom: 6px; }
+
+    .table-box { overflow-x: auto; padding: 0; }
+    table { width: 100%; border-collapse: collapse; min-width: 820px; }
+    th, td { padding: 14px 16px; vertical-align: top; border-bottom: 1px solid rgba(148,163,184,.16); }
+    thead th {
+      text-align: left; font-size: 12px; color: var(--soft); letter-spacing: .08em; text-transform: uppercase;
+      background: rgba(248,250,252,.95);
+    }
+    tr:last-child td { border-bottom: none; }
+
+    .flow {
+      display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; align-items: stretch;
+    }
+    .flow-step {
+      position: relative; padding: 14px; border-radius: 18px; background: rgba(255,255,255,.86);
+      border: 1px solid var(--border); min-height: 108px;
+    }
+    .flow-step strong { display: block; margin-bottom: 6px; }
+    .flow-step span { display: block; color: var(--muted); font-size: 13px; }
+    .flow-step::after {
+      content: "→"; position: absolute; right: -18px; top: 50%; transform: translateY(-50%); color: var(--soft); font-weight: 700;
+    }
+    .flow-step:last-child::after { content: ""; }
+
+    details {
+      background: rgba(255,255,255,.86);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-soft);
+    }
+    summary { cursor: pointer; font-weight: 700; color: var(--text); }
+    summary::marker { color: var(--accent); }
+    details p, details li { color: var(--muted); }
+
+    .code-shell { display: flex; flex-direction: column; gap: 8px; margin: 0; }
+    .copy-btn {
+      align-self: flex-end; min-height: 30px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--border);
+      background: rgba(255,255,255,.9); color: var(--muted); font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit;
+    }
+    .copy-btn.copied { background: rgba(21,128,61,.08); color: var(--good); }
+    pre {
+      margin: 0; background: var(--code-bg); color: #e5e7eb; border-radius: 16px; padding: 16px 18px; overflow: auto;
+      font-size: 13px; line-height: 1.65; white-space: pre-wrap; word-break: break-word;
+    }
+    code.inline { background: rgba(15,23,42,.06); border: 1px solid rgba(148,163,184,.22); padding: 1px 6px; border-radius: 6px; font-size: .96em; }
+
+    .status {
+      display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 999px;
+      background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.18); color: var(--warn); font-size: 12px; font-weight: 700; margin-bottom: 10px;
+    }
+
+    .hidden-detail { opacity: .95; }
+    body[data-focus="all"] .focus-badge,
+    body[data-focus="all"] .detail-only,
+    body[data-focus="all"] .summary-only { opacity: 1; }
+    body[data-focus="spec"] .focus-badge:not(.focus-spec),
+    body[data-focus="flow"] .focus-badge:not(.focus-flow),
+    body[data-focus="ops"] .focus-badge:not(.focus-ops),
+    body[data-focus="safety"] .focus-badge:not(.focus-safety) {
+      opacity: .42;
+      filter: grayscale(.35);
+    }
+    body[data-density="0"] .detail-only,
+    body[data-density="0"] .detail-only-block { display: none; }
+    body[data-density="1"] .detail-only-block { display: none; }
+    body[data-density="2"] .detail-only,
+    body[data-density="2"] .detail-only-block { display: block; }
+
+    .bottom-home { display: flex; justify-content: center; margin: 20px 0 4px; }
+    footer { margin-top: 22px; text-align: center; color: var(--soft); font-size: 13px; }
+
+    @media (max-width: 1080px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .metric-row { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr 1fr; }
+      .flow-step::after { content: ""; }
+    }
+    @media (max-width: 640px) {
+      body { padding: 14px; }
+      header { padding: 18px; }
+      .content { padding: 18px; }
+      .mobile-toc { display: flex; }
+      .sidebar { display: none; }
+      .metric-row { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; }
+      .density-row { grid-template-columns: 1fr; }
+      .density-label { text-align: left; min-width: 0; }
+      table { min-width: 0; width: 100%; table-layout: fixed; }
+      .table-box { overflow-x: visible; }
+      th, td { padding: 10px 11px; font-size: 13px; }
+      pre { padding: 14px 15px; font-size: 13px; }
+      .section h2 { font-size: 21px; }
+    }
+  </style>
+</head>
+<body data-focus="all" data-density="2">
+  <div class="container">
+    <div class="home-row"><a class="home-btn" href="../index.html">HOME</a></div>
+
+    <header>
+      <div class="eyebrow">
+        <span class="badge">PDF → HTML</span>
+        <span class="badge">white paper reader</span>
+        <span class="badge">38 pages</span>
+        <span class="badge">May 2026</span>
+      </div>
+      <h1>Spec-Driven Production<br />Grade Development in the Age of Vibe Coding</h1>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p>
+            이 백서는 AI 코드 생성 속도가 아니라, 그 속도를 생산 단계로 끌고 가는 구조를 다룹니다.
+            명세, 실행 모드, MCP, 팀 운영, 안전망이 한 묶음으로 연결됩니다.
+          </p>
+          <div class="metric-row">
+            <div class="metric"><strong>SDD</strong><span>code-first가 아닌 spec-first</span></div>
+            <div class="metric"><strong>MCP</strong><span>one integration, every framework</span></div>
+            <div class="metric"><strong>Guardrails</strong><span>policy · sandbox · HITL</span></div>
+            <div class="metric"><strong>Evaluation</strong><span>binary test를 넘어 scored judgment</span></div>
+          </div>
+        </div>
+        <div class="hero-quote">
+          <div class="label">Thesis</div>
+          <p>
+            AI has eliminated the code production bottleneck, moving the constraint downstream to humans who must
+            review, test, and integrate that output.
+          </p>
+          <small>핵심은 더 빠른 코드가 아니라, 더 강한 명세와 안전한 운영입니다.</small>
+        </div>
+      </div>
+    </header>
+
+    <nav class="mobile-toc" aria-label="모바일 목차">
+      <a href="#intro">Introduction</a>
+      <a href="#sdd">SDD</a>
+      <a href="#spec">Spec quality</a>
+      <a href="#instructions">Instructions</a>
+      <a href="#mcp">MCP</a>
+      <a href="#team">Team</a>
+      <a href="#safety">Safety net</a>
+      <a href="#summary">Summary</a>
+    </nav>
+
+    <div class="layout">
+      <aside class="sidebar" aria-label="목차">
+        <h2>Table of contents</h2>
+        <nav class="toc">
+          <a href="#intro">1. Introduction</a>
+          <a href="#sdd">2. Spec-Driven Development (SDD)</a>
+          <a href="#spec">3. A good specification / Which format to use? / Behavior Driven</a>
+          <a href="#instructions">4. Where do the instructions live?</a>
+          <a href="#modes">5. Different Prompts for Different Use Cases</a>
+          <a href="#mcp">6. MCP: One Integration, Every Framework</a>
+          <a href="#team">7. Team Culture & Process Evolution</a>
+          <a href="#reviews">8. Code Reviews / Sustainability</a>
+          <a href="#safety">9. Zero-Trust Development: Building the Safety Net</a>
+          <a href="#summary">10. Summary</a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <section class="panel focus-badge focus-flow">
+          <div class="panel-top">
+            <h3>읽기 컨트롤</h3>
+            <div class="tabs" role="tablist" aria-label="읽기 포커스">
+              <button class="tab-btn active" data-focus="all" type="button">전체</button>
+              <button class="tab-btn" data-focus="spec" type="button">명세</button>
+              <button class="tab-btn" data-focus="flow" type="button">실행</button>
+              <button class="tab-btn" data-focus="ops" type="button">운영</button>
+              <button class="tab-btn" data-focus="safety" type="button">안전</button>
+            </div>
+          </div>
+          <div class="density-row">
+            <label for="density">읽기 밀도</label>
+            <input id="density" type="range" min="0" max="2" step="1" value="2" />
+            <div class="density-label" id="density-label">full</div>
+          </div>
+        </section>
+
+        <section class="section focus-badge focus-flow" id="intro">
+          <h2>1. Introduction</h2>
+          <div class="grid-2">
+            <div class="quote">
+              <strong>What changed</strong>
+              <p>
+                개발은 더 이상 API 문서를 뒤적이며 수동으로 코드를 맞추는 일이 아닙니다.
+                AI 코딩 에이전트가 검색, 실행, 테스트, 커밋까지 묶어 처리합니다.
+              </p>
+              <small class="detail-only">그러나 속도는 해결책이 아니라, 새로운 병목을 드러내는 신호입니다.</small>
+            </div>
+            <div class="callout">
+              <strong>핵심 전환</strong>
+              <p>
+                사람의 시간은 구현에서 설계·검토·통합으로 옮겨갑니다.
+                코드는 재생성 가능하지만, 품질 기준과 협업 구조는 재생성되지 않습니다.
+              </p>
+              <p class="detail-only-block">그래서 이 백서는 “코드를 더 많이 쓰는 법”이 아니라 “시스템을 더 잘 다루는 법”을 다룹니다.</p>
+            </div>
+          </div>
+          <div class="flow" style="margin-top:14px;">
+            <div class="flow-step"><strong>Velocity</strong><span>AI가 생성 속도를 끌어올림</span></div>
+            <div class="flow-step"><strong>Illusion of speed</strong><span>버그·검토·통합이 같이 커짐</span></div>
+            <div class="flow-step"><strong>Downstream shift</strong><span>병목이 사람 쪽으로 이동</span></div>
+            <div class="flow-step"><strong>New discipline</strong><span>spec, eval, policy, sandbox</span></div>
+          </div>
+        </section>
+
+        <section class="section focus-badge focus-spec" id="sdd">
+          <h2>2. Spec-Driven Development (SDD)</h2>
+          <div class="grid-2">
+            <div class="card">
+              <div class="kicker">code-first → spec-first</div>
+              <h3>코드는 이제 소모품이다</h3>
+              <p>
+                좋은 명세가 있으면 코드베이스는 다시 생성할 수 있습니다.
+                핵심은 구현을 먼저 손대는 것이 아니라, AI가 따라야 할 설계도를 먼저 만드는 일입니다.
+              </p>
+              <p class="detail-only">이 관점에서 개발자는 타이핑하는 사람보다 기술 아키텍트에 가깝습니다.</p>
+            </div>
+            <div class="card">
+              <div class="kicker">Architectural North Star</div>
+              <h3>명세는 방향을 잃지 않게 만든다</h3>
+              <p>
+                context fragmentation을 막는 가장 강한 장치가 명세입니다.
+                문서가 source of truth가 되면 인간과 에이전트가 같은 기준을 봅니다.
+              </p>
+              <p class="detail-only">specs/ 폴더는 단순한 문서 저장소가 아니라, AI가 읽고 검증하는 작업 표면입니다.</p>
+            </div>
+          </div>
+          <div class="grid-3" style="margin-top:14px;">
+            <div class="artifact focus-badge focus-spec">
+              <div class="kicker">What belongs in a spec</div>
+              <ul>
+                <li>전체 기술 설계</li>
+                <li>DB schema / API contract</li>
+                <li>도구와 라이브러리 버전</li>
+                <li>왜 이걸 만드는지에 대한 배경</li>
+              </ul>
+            </div>
+            <div class="artifact focus-badge focus-spec">
+              <div class="kicker">Format</div>
+              <ul>
+                <li>Markdown은 narrative instructions에 좋다</li>
+                <li>YAML은 구조화된 설정과 schema에 좋다</li>
+                <li>중요한 건 사람이 읽을 수 있어야 한다는 점</li>
+              </ul>
+            </div>
+            <div class="artifact focus-badge focus-spec">
+              <div class="kicker">BDD</div>
+              <ul>
+                <li>Scenario / Given / When / Then</li>
+                <li>State → Action → Outcome</li>
+                <li>사용자 행동을 기준으로 검증</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="section focus-badge focus-spec" id="spec">
+          <h2>3. A good specification / Which format to use? / Behavior Driven</h2>
+          <div class="table-box">
+            <table>
+              <thead>
+                <tr>
+                  <th>Layer</th>
+                  <th>What it does</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Spec</td>
+                  <td>Defines architecture, contracts, scenarios, and constraints</td>
+                  <td>Lets the agent regenerate code without guessing</td>
+                </tr>
+                <tr>
+                  <td>Markdown</td>
+                  <td>Narrative instructions and human-readable context</td>
+                  <td>Anchors attention and keeps the story legible</td>
+                </tr>
+                <tr>
+                  <td>YAML</td>
+                  <td>Structured settings, deep configuration, nested data</td>
+                  <td>Reduces format tax for machine parsing</td>
+                </tr>
+                <tr>
+                  <td>Gherkin</td>
+                  <td>Scenario / Given / When / Then behavior specs</td>
+                  <td>Forces the model to think in outcomes, not vibes</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="grid-2" style="margin-top:14px;">
+            <div class="note">
+              <div class="kicker">Behavior Driven</div>
+              <p>
+                BDD turns ambiguous ideas into explicit architecture.
+                It is not just a testing style; it is a way to define what good looks like before code exists.
+              </p>
+            </div>
+            <div class="quote">
+              <strong>Principle</strong>
+              <p>
+                Don’t say “make a login page.” Break down requirements, database schemas, API contracts,
+                diagrams, tools, version numbers, background context, and edge cases.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section focus-badge focus-flow" id="instructions">
+          <h2>4. Where do the instructions live?</h2>
+          <div class="grid-2">
+            <div class="card">
+              <div class="kicker">Chat interface</div>
+              <h3>Short-lived, session-specific</h3>
+              <p>Use the chat for orchestration and immediate feedback, not for dumping a giant design document.</p>
+              <p class="detail-only">Long prompts blow context budget, increase latency, and fracture the thread.</p>
+            </div>
+            <div class="card">
+              <div class="kicker">specs/ folder</div>
+              <h3>Versioned source of truth</h3>
+              <p>Technical design, BDD scenarios, API contracts, and schemas live here. The agent can index and verify them directly.</p>
+              <p class="detail-only">This is the place where the blueprint survives beyond a single chat session.</p>
+            </div>
+          </div>
+          <div class="grid-3" style="margin-top:14px;">
+            <div class="artifact">
+              <div class="kicker">Agent Skills</div>
+              <p>Reusable workflows for feature-specific behavior.</p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">System prompts</div>
+              <p>Global identity and project-specific rules layered hierarchically.</p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">Project spec</div>
+              <p>The project’s DNA, read by the CLI agent and prioritized locally.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section focus-badge focus-flow" id="modes">
+          <h2>5. Different Prompts for Different Use Cases</h2>
+          <div class="grid-3">
+            <div class="decision">
+              <span class="status">Architect</span>
+              <h3>Project generation</h3>
+              <p>Start with scaffolding, structure, and constraints. No YOLO mode.</p>
+            </div>
+            <div class="decision">
+              <span class="status">Builder</span>
+              <h3>Feature generation</h3>
+              <p>Keep style aligned with the existing codebase and request a diff-aware build.</p>
+            </div>
+            <div class="decision">
+              <span class="status">Forensic</span>
+              <h3>Bug fixing</h3>
+              <p>Use logs, reproduction commands, and failing tests before asking for a patch.</p>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:14px;">
+            <div class="summary-box">
+              <div class="kicker">Documentation writing</div>
+              <p>Docs are source of truth. Keep README.md, CHANGELOG.md, and docstrings synchronized.</p>
+            </div>
+            <div class="summary-box">
+              <div class="kicker">Data engineering</div>
+              <p>Always surface the exact SQL or command used to produce results.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section focus-badge focus-flow" id="mcp">
+          <h2>6. MCP: One Integration, Every Framework</h2>
+          <div class="grid-2">
+            <div class="card">
+              <div class="kicker">The idea</div>
+              <h3>USB-C for AI tools</h3>
+              <p>
+                Build one MCP server for a database, API, or file system, and any compatible agent can use it.
+                The integration layer becomes reusable instead of being rewritten per client.
+              </p>
+              <p class="detail-only">That separation is what turns a narrow feature demo into a stable platform boundary.</p>
+            </div>
+            <div class="card">
+              <div class="kicker">Server / client</div>
+              <h3>Expose tools, then discover them</h3>
+              <p>The server publishes tools; the client initializes a session, lists tools, and calls them.</p>
+              <p class="detail-only">The paper shows a SQLite-backed example in roughly forty lines.</p>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:14px;">
+            <div class="prompt">
+              <div class="label">copyable snippet</div>
+              <h3>MCP server</h3>
+              <div class="code-shell">
+                <button class="copy-btn" type="button" data-copy-target="mcp-server">Copy</button>
+                <pre id="mcp-server">import sqlite3
+from mcp.server import Server
+from mcp.server.stdio import stdio_server
+from mcp.types import Tool, TextContent
+
+server = Server("knowledge-base")
+db = sqlite3.connect("knowledge.db")</pre>
+              </div>
+            </div>
+            <div class="prompt">
+              <div class="label">copyable snippet</div>
+              <h3>MCP client</h3>
+              <div class="code-shell">
+                <button class="copy-btn" type="button" data-copy-target="mcp-client">Copy</button>
+                <pre id="mcp-client">from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+server_params = StdioServerParameters(command="python", args=["mcp_server.py"])
+async with stdio_client(server_params) as (read, write):
+    async with ClientSession(read, write) as session:
+        await session.initialize()</pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section focus-badge focus-ops" id="team">
+          <h2>7. Team Culture & Process Evolution</h2>
+          <div class="grid-3">
+            <div class="artifact">
+              <div class="kicker">What breaks</div>
+              <ul>
+                <li>Huge PRs</li>
+                <li>Merge conflicts in shared files</li>
+                <li>Context fragmentation across timezones</li>
+              </ul>
+            </div>
+            <div class="artifact">
+              <div class="kicker">What changes</div>
+              <ul>
+                <li>Summaries and risk snapshots before review</li>
+                <li>Smaller integration chunks</li>
+                <li>Human attention moves to architecture</li>
+              </ul>
+            </div>
+            <div class="artifact">
+              <div class="kicker">What scales</div>
+              <ul>
+                <li>Managed reviewer</li>
+                <li>Hybrid runtime</li>
+                <li>Custom runtime that understands the whole system</li>
+              </ul>
+            </div>
+          </div>
+          <details style="margin-top:14px;" class="detail-only-block">
+            <summary>Sustainability</summary>
+            <p>
+              Approval fatigue is real. Frequent AI users can end up clicking approve reflexively.
+              The paper pushes back with quiet hours and weekly insight sessions so learning becomes shared instead of isolated.
+            </p>
+          </details>
+        </section>
+
+        <section class="section focus-badge focus-ops" id="reviews">
+          <h2>8. Code Reviews / Sustainability</h2>
+          <div class="grid-2">
+            <div class="quote">
+              <strong>Review at speed</strong>
+              <p>
+                Review work shifts from syntax policing to integration risk, side effects, and architectural impact.
+                Bundled summaries help humans focus on what changed and what could break.
+              </p>
+            </div>
+            <div class="callout">
+              <strong>Operational boundary</strong>
+              <p>
+                Large-scale AI adoption needs a process that handles conflict, fatigue, and async reviews.
+                The team workflow is part of the product surface now.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section focus-badge focus-safety" id="safety">
+          <h2>9. Zero-Trust Development: Building the Safety Net</h2>
+          <div class="grid-3">
+            <div class="decision">
+              <span class="status">Guardrails</span>
+              <h3>Structural + semantic gating</h3>
+              <p>Rules at the tool and environment layer, plus intent checks on top.</p>
+            </div>
+            <div class="decision">
+              <span class="status">Sandbox</span>
+              <h3>Restricted execution</h3>
+              <p>Ephemeral low-privilege containers reduce blast radius.</p>
+            </div>
+            <div class="decision">
+              <span class="status">HITL</span>
+              <h3>Human sign-off</h3>
+              <p>High-stakes actions still need a human in the loop.</p>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:14px;">
+            <div class="prompt">
+              <div class="label">copyable snippet</div>
+              <h3>policies.yaml</h3>
+              <div class="code-shell">
+                <button class="copy-btn" type="button" data-copy-target="policy-yaml">Copy</button>
+                <pre id="policy-yaml">environments:
+  localhost:
+    blocked_tools:
+      - send_email
+roles:
+  viewer:
+    allowed_tools:
+      - list_files
+      - read_file</pre>
+              </div>
+            </div>
+            <div class="prompt">
+              <div class="label">copyable snippet</div>
+              <h3>policy_server.py</h3>
+              <div class="code-shell">
+                <button class="copy-btn" type="button" data-copy-target="policy-server">Copy</button>
+                <pre id="policy-server">class PolicyService:
+    def is_tool_allowed(self, tool_name: str) -> bool:
+        env_config = self.config.get("environments", {}).get(self.env, {})
+        if tool_name in env_config.get("blocked_tools", []):
+            return False
+        role_allows = self.config.get("roles", {}).get(self.role, {}).get("allowed_tools", [])
+        return "*" in role_allows or tool_name in role_allows</pre>
+              </div>
+            </div>
+          </div>
+          <div class="grid-3" style="margin-top:14px;">
+            <div class="artifact">
+              <div class="kicker">AI-generated tests</div>
+              <p>Ask the agent to generate failing tests or reproduction commands before the fix.</p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">Evaluation</div>
+              <p>Binary tests are not enough for ML-driven behavior; score-based evaluation catches drift.</p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">Context hygiene</div>
+              <p>Sanitize prompts and inputs so context hallucination does not leak secrets or stale values.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="summary">
+          <h2>10. Summary</h2>
+          <div class="grid-2">
+            <div class="summary-box">
+              <div class="kicker">Conclusion</div>
+              <h3>What the paper is really saying</h3>
+              <p>
+                AI has moved the bottleneck away from code production and toward orchestration, review, testing, integration,
+                and deployment. The solution is not just better prompts; it is a system of specs, tools, policy, and team discipline.
+              </p>
+            </div>
+            <div class="summary-box">
+              <div class="kicker">Where to start</div>
+              <ol>
+                <li>Write the spec first.</li>
+                <li>Choose Markdown for narrative, YAML for structure.</li>
+                <li>Separate prompt types by workflow.</li>
+                <li>Add sandboxing, review gates, and evaluation.</li>
+              </ol>
+            </div>
+          </div>
+          <details style="margin-top:14px;">
+            <summary>Endnotes and references</summary>
+            <p>Public links used in the paper’s endnotes remain listed in the source PDF; this page keeps the reading experience focused on the argument itself.</p>
+          </details>
+        </section>
+
+        <div class="bottom-home"><a class="home-btn" href="../index.html">HOME</a></div>
+      </main>
+    </div>
+
+    <footer>Spec-Driven Production Grade Development — reading edition</footer>
+  </div>
+
+  <script>
+    (function () {
+      const body = document.body;
+      const tabs = Array.from(document.querySelectorAll('.tab-btn'));
+      const density = document.getElementById('density');
+      const densityLabel = document.getElementById('density-label');
+      const labels = ['skim', 'focused', 'full'];
+      const copyBtns = Array.from(document.querySelectorAll('.copy-btn'));
+
+      function setDensity(value) {
+        body.dataset.density = String(value);
+        densityLabel.textContent = labels[value] || 'full';
+      }
+
+      density.addEventListener('input', () => setDensity(density.value));
+      setDensity(density.value);
+
+      tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const focus = btn.dataset.focus || 'all';
+          body.dataset.focus = focus;
+          tabs.forEach(t => t.classList.toggle('active', t === btn));
+        });
+      });
+
+      copyBtns.forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.copyTarget;
+          const el = document.getElementById(id);
+          if (!el) return;
+          const text = el.innerText.trim();
+          try {
+            await navigator.clipboard.writeText(text);
+            btn.textContent = 'Copied';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = 'Copy';
+              btn.classList.remove('copied');
+            }, 1200);
+          } catch (e) {
+            btn.textContent = 'Copy failed';
+            setTimeout(() => { btn.textContent = 'Copy'; }, 1200);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
