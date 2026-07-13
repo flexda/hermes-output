@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenAI GPT-5.6 공식 활용 가이드 — reading edition</title>
+  <meta name="description" content="OpenAI GPT-5.6 공식 활용 가이드를 읽기 쉬운 구조로 재편한 HTML reading edition. 마이그레이션, 프롬프트, 캐싱, Pro 모드, 멀티 에이전트, 안전한 운영까지 한 번에 읽을 수 있게 정리했다." />
+  <style>
+    :root {
+      --bg: #f7f4ed;
+      --surface: rgba(255,255,255,0.92);
+      --surface-strong: rgba(255,255,255,0.98);
+      --border: rgba(148,163,184,0.22);
+      --text: #111827;
+      --muted: #4b5563;
+      --soft: #6b7280;
+      --accent: #2563eb;
+      --accent-2: #0f766e;
+      --accent-3: #7c3aed;
+      --good: #15803d;
+      --warn: #b45309;
+      --shadow: 0 18px 50px rgba(17,24,39,0.08);
+      --shadow-soft: 0 10px 24px rgba(17,24,39,0.06);
+      --code-bg: #0f172a;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.74;
+      overflow-x: clip;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,0.08), transparent 30%),
+        radial-gradient(circle at top right, rgba(15,118,110,0.08), transparent 28%),
+        linear-gradient(180deg, #fffdf8 0%, var(--bg) 100%);
+      padding: clamp(12px, 2.4vw, 24px);
+    }
+
+    img, svg, video, iframe, object, embed { max-width: 100%; height: auto; }
+    h1, h2, h3, h4, p, li, a, td, th, code, pre, .badge, .chip, .tab-btn, summary {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.34), rgba(255,255,255,0.34)),
+        linear-gradient(90deg, rgba(148,163,184,0.06) 1px, transparent 1px),
+        linear-gradient(rgba(148,163,184,0.06) 1px, transparent 1px);
+      background-size: auto, 48px 48px, 48px 48px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.15), transparent 82%);
+    }
+
+    .container {
+      max-width: 1220px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .home-row {
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(37,99,235,0.18);
+      background: rgba(255,255,255,0.86);
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: var(--shadow-soft);
+    }
+
+    header {
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92));
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      padding: clamp(20px, 4vw, 34px);
+      margin-bottom: 16px;
+    }
+
+    .eyebrow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.8);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(30px, 5.8vw, 56px);
+      line-height: 1.04;
+      letter-spacing: -0.05em;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 18px;
+      align-items: start;
+      margin-top: 16px;
+    }
+
+    .hero-copy p {
+      margin: 12px 0 0;
+      max-width: 920px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .metric {
+      background: rgba(248,250,252,0.95);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 3px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hero-quote {
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.96));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .hero-quote .label {
+      display: inline-flex;
+      min-height: 28px;
+      align-items: center;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(37,99,235,0.08);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .hero-quote p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .hero-quote small {
+      display: block;
+      margin-top: 10px;
+      color: var(--soft);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .sidebar,
+    .content,
+    .panel,
+    .card,
+    .note,
+    .callout,
+    .table-wrap,
+    .quote,
+    .artifact,
+    .decision,
+    .prompt,
+    .summary-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      padding: 18px;
+    }
+
+    .sidebar h2,
+    .section h2 {
+      margin: 0 0 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .sidebar h2 { font-size: 16px; }
+    .section h2 { font-size: 24px; line-height: 1.2; }
+
+    .toc { display: grid; gap: 8px; }
+    .toc a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--muted);
+      background: rgba(255,255,255,0.62);
+      border: 1px solid transparent;
+      line-height: 1.35;
+    }
+    .toc a:hover {
+      color: var(--accent);
+      border-color: rgba(37,99,235,0.18);
+      background: rgba(37,99,235,0.05);
+    }
+
+    .content { padding: 24px; }
+    section { margin-bottom: 28px; }
+
+    .mobile-toc {
+      display: none;
+      gap: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 0 14px;
+      padding: 2px 0 4px;
+    }
+    .mobile-toc a {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.74);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .panel { padding: 18px; }
+    .panel-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .panel-top h3 { margin: 0; font-size: 18px; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tab-btn {
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.84);
+      color: var(--muted);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-color: transparent;
+    }
+    .density-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .density-row label { font-size: 13px; color: var(--soft); }
+    input[type="range"] { width: 100%; accent-color: var(--accent); }
+    .density-label { min-width: 92px; text-align: right; font-size: 13px; color: var(--soft); }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+
+    .card,
+    .note,
+    .callout,
+    .artifact,
+    .decision,
+    .prompt,
+    .summary-box { padding: 18px; background: var(--surface-strong); }
+
+    .card h3,
+    .artifact h3,
+    .decision h3,
+    .prompt h3,
+    .summary-box h3 { margin: 0 0 10px; font-size: 18px; }
+
+    .card p,
+    .artifact p,
+    .decision p,
+    .prompt p,
+    .note p,
+    .callout p,
+    .summary-box p,
+    .summary-box li { margin-top: 0; color: var(--muted); }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(15,118,110,0.08);
+      border: 1px solid rgba(15,118,110,0.14);
+      color: var(--accent-2);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(37,99,235,0.08);
+      border: 1px solid rgba(37,99,235,0.14);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .chip.alt { background: rgba(15,118,110,0.08); border-color: rgba(15,118,110,0.14); color: var(--accent-2); }
+    .chip.gray { background: rgba(148,163,184,0.12); border-color: rgba(148,163,184,0.18); color: var(--soft); }
+
+    .quote {
+      padding: 18px;
+      border-left: 5px solid var(--accent);
+      background: rgba(37,99,235,0.05);
+    }
+    .quote strong { display: block; margin-bottom: 8px; }
+    .quote p { margin: 0; color: var(--muted); }
+    .quote small { display: block; margin-top: 10px; color: var(--soft); }
+
+    .callout {
+      border-left: 4px solid var(--good);
+      background: rgba(21,128,61,0.05);
+    }
+    .callout strong { display: block; margin-bottom: 6px; }
+
+    .table-wrap { overflow-x: auto; padding: 0; }
+    table { width: 100%; border-collapse: collapse; min-width: 780px; }
+    th, td { padding: 14px 16px; vertical-align: top; border-bottom: 1px solid rgba(148,163,184,0.16); }
+    thead th {
+      text-align: left;
+      font-size: 12px;
+      color: var(--soft);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: rgba(248,250,252,0.95);
+    }
+    tr:last-child td { border-bottom: none; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+    .flow-step {
+      position: relative;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.86);
+      border: 1px solid var(--border);
+      min-height: 108px;
+    }
+    .flow-step strong { display: block; margin-bottom: 6px; }
+    .flow-step span { display: block; color: var(--muted); font-size: 13px; }
+    .flow-step::after {
+      content: "→";
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--soft);
+      font-weight: 700;
+    }
+    .flow-step:last-child::after { content: ""; }
+
+    details {
+      background: rgba(255,255,255,0.86);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-soft);
+    }
+    summary { cursor: pointer; font-weight: 700; color: var(--text); }
+    summary::marker { color: var(--accent); }
+    details p, details li { color: var(--muted); }
+
+    .code-shell { display: flex; flex-direction: column; gap: 8px; margin: 0; }
+    .copy-btn {
+      align-self: flex-end;
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.82);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    pre {
+      margin: 0;
+      background: var(--code-bg);
+      color: #e5e7eb;
+      border-radius: 16px;
+      padding: 16px 18px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .references { display: grid; gap: 10px; }
+    .references a { color: var(--accent); text-decoration: none; }
+    .references a:hover { text-decoration: underline; }
+
+    .bottom-home {
+      margin-top: 28px;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    footer {
+      margin-top: 16px;
+      text-align: center;
+      color: var(--soft);
+      font-size: 13px;
+      padding-bottom: 8px;
+    }
+
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .metric-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-4, .artifact-grid, .flow { grid-template-columns: 1fr 1fr; }
+      .grid-2, .card-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .sidebar { display: none; }
+      .mobile-toc { display: flex; }
+      .content { padding: 18px; }
+      .hero { padding: 16px; }
+      .metric-row, .grid-4, .artifact-grid, .grid-3, .flow { grid-template-columns: 1fr; }
+      .flow-step::after { content: ""; }
+      .density-row { grid-template-columns: 1fr; }
+      .density-label { text-align: left; min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="home-row"><a class="home-btn" href="../index.html">HOME</a></div>
+
+    <header>
+      <div class="eyebrow">
+        <span class="badge">Source: PyTorchKR share</span>
+        <span class="badge">Reading edition</span>
+        <span class="badge">Theme 1</span>
+      </div>
+      <h1>OpenAI GPT-5.6 공식 활용 가이드</h1>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p>
+            이 글의 핵심은 모델 이름만 바꾸는 일이 아니라, <strong>프롬프트·추론 강도·캐싱·모드·평가</strong>를 함께 다시 맞춰야 한다는 점입니다.
+            마이그레이션은 단순 교체가 아니라 튜닝 패스이고, 좋은 결과는 짧고 목적이 분명한 프롬프트에서 나온다는 메시지를 중심으로 읽으면 이해가 쉽습니다.
+          </p>
+          <div class="metric-row" aria-label="핵심 키워드">
+            <div class="metric"><strong>Migration</strong><span>tuning pass로 다루기</span></div>
+            <div class="metric"><strong>Prompting</strong><span>짧고 목적 중심으로</span></div>
+            <div class="metric"><strong>Modes</strong><span>작업 기준으로 선택</span></div>
+            <div class="metric"><strong>Safety</strong><span>평가로 검증</span></div>
+          </div>
+        </div>
+        <aside class="hero-quote">
+          <div class="label">Thesis</div>
+          <p>
+            “모델 이름만 바꾸지 말고, 프롬프트·추론 강도·캐싱·모드까지 함께 재조정하라.”
+          </p>
+          <small>GPT-5.6은 더 짧은 출력과 더 직접적인 지시를 요구하는 쪽에 가깝습니다.</small>
+        </aside>
+      </div>
+    </header>
+
+    <nav class="mobile-toc" aria-label="모바일 목차">
+      <a href="#overview">Overview</a>
+      <a href="#migration">Migration</a>
+      <a href="#prompting">Prompting</a>
+      <a href="#features">Features</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#sources">Sources</a>
+    </nav>
+
+    <div class="layout">
+      <aside class="sidebar" aria-label="목차">
+        <h2>Table of contents</h2>
+        <nav class="toc">
+          <a href="#overview">1. 한눈에 보는 핵심</a>
+          <a href="#migration">2. 마이그레이션은 튜닝 패스</a>
+          <a href="#families">3. Sol / Terra / Luna</a>
+          <a href="#prompting">4. 프롬프트는 더 짧게</a>
+          <a href="#features">5. 새 기능과 활용 포인트</a>
+          <a href="#workflow">6. 작업 기준으로 프롬프트하기</a>
+          <a href="#checklist">7. 바로 적용할 체크리스트</a>
+          <a href="#sources">8. 출처와 메모</a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <section class="panel">
+          <div class="panel-top">
+            <h3>읽기 컨트롤</h3>
+            <div class="tabs" role="tablist" aria-label="읽기 포커스">
+              <button class="tab-btn active" data-focus="all" type="button">전체</button>
+              <button class="tab-btn" data-focus="summary" type="button">요약</button>
+              <button class="tab-btn" data-focus="ops" type="button">운영</button>
+              <button class="tab-btn" data-focus="safety" type="button">안전</button>
+            </div>
+          </div>
+          <div class="density-row">
+            <label for="density">읽기 밀도</label>
+            <input id="density" type="range" min="0" max="2" step="1" value="2" />
+            <div class="density-label" id="density-label">full</div>
+          </div>
+        </section>
+
+        <section class="section" id="overview">
+          <h2>1. 한눈에 보는 핵심</h2>
+          <div class="grid-2">
+            <div class="quote">
+              <strong>핵심 문장</strong>
+              <p>마이그레이션은 모델 교체가 아니라 튜닝 패스다.</p>
+              <small>이 문장은 전체 글의 기준점입니다. 모델 이름보다 워크플로우 조정이 먼저입니다.</small>
+            </div>
+            <div class="callout">
+              <strong>실무 해석</strong>
+              <p>
+                GPT-5.6은 “짧게”라는 일반론보다, 필요한 사실·제약·다음 행동을 정확히 담는 쪽이 더 중요하다고 말합니다.
+                즉, 덜 쓰되 덜 중요한 걸 버리라는 뜻이지, 산출물을 줄이라는 뜻은 아닙니다.
+              </p>
+            </div>
+          </div>
+          <div class="artifact-grid" style="margin-top:14px;">
+            <div class="artifact">
+              <div class="kicker">what changes</div>
+              <p>프롬프트 길이, 추론 강도, 캐싱, 모드를 함께 재검토해야 합니다.</p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">what stays</div>
+              <p>중요한 제약, 승인 경계, 성공 기준은 여전히 명시해야 합니다.</p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">what improves</div>
+              <p>호출 수와 중간 출력이 줄어들 수 있지만, 품질이 유지될 때만 의미가 있습니다.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="migration">
+          <h2>2. 마이그레이션은 튜닝 패스</h2>
+          <div class="grid-2">
+            <div class="card">
+              <div class="kicker">migration rule</div>
+              <h3>슬러그 교체로 끝내지 않는다</h3>
+              <p>
+                이 가이드는 모델 이름만 바꾸는 식의 마이그레이션을 권하지 않습니다.
+                대표 작업 기준으로 추론 설정을 비교하고, 기존 프롬프트를 그대로 복사하지 말고 재조정해야 한다고 말합니다.
+              </p>
+            </div>
+            <div class="card">
+              <div class="kicker">practical note</div>
+              <h3>대표 워크로드로 검증한다</h3>
+              <p>
+                품질이 중요한 작업이라면 한 단계 낮은 추론 설정까지 같이 비교해보는 쪽이 좋습니다.
+                비용과 지연시간만 줄이고 품질을 잃는 이동은 성공이 아닙니다.
+              </p>
+            </div>
+          </div>
+          <div class="table-wrap" style="margin-top:14px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>항목</th>
+                  <th>무엇을 확인하나</th>
+                  <th>왜 중요한가</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>모델 선택</td>
+                  <td>sol / terra / luna 중 어떤 조합이 맞는지</td>
+                  <td>성능·비용·빈도 균형이 다릅니다.</td>
+                </tr>
+                <tr>
+                  <td>추론 강도</td>
+                  <td>xhigh, max, pro 모드 비교</td>
+                  <td>더 깊게 생각할지, 더 빨리 답할지 결정합니다.</td>
+                </tr>
+                <tr>
+                  <td>프롬프트</td>
+                  <td>길고 일반적인 지시를 줄였는지</td>
+                  <td>불필요한 반복이 줄고 필요한 행동이 선명해집니다.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="families">
+          <h2>3. Sol / Terra / Luna</h2>
+          <div class="grid-3">
+            <div class="decision">
+              <div class="kicker">sol</div>
+              <h3>플래그십 성능</h3>
+              <p>가장 높은 품질이 필요한 복잡한 작업에 둡니다.</p>
+            </div>
+            <div class="decision">
+              <div class="kicker">terra</div>
+              <h3>지능과 비용의 균형</h3>
+              <p>실무에서 가장 넓게 쓸 수 있는 중간 지점입니다.</p>
+            </div>
+            <div class="decision">
+              <div class="kicker">luna</div>
+              <h3>효율 중심</h3>
+              <p>대용량·고빈도 워크로드를 가볍게 처리할 때 맞습니다.</p>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:14px;">
+            <strong>권장 해석</strong>
+            <p>이 셋은 “무조건 상위 모델”이 아니라 “작업 유형에 맞는 도구 선택”으로 읽는 편이 맞습니다.</p>
+          </div>
+        </section>
+
+        <section class="section" id="prompting">
+          <h2>4. 프롬프트는 더 짧게, 하지만 더 정확하게</h2>
+          <div class="grid-2">
+            <div class="quote">
+              <strong>짧게 유지하라</strong>
+              <p>“간결하게 답하라”, “짧게 유지하라” 같은 일반론은 오히려 필요한 산출물을 줄일 수 있습니다.</p>
+              <small>즉, 단순 축약이 아니라 정보 밀도를 조절해야 합니다.</small>
+            </div>
+            <div class="quote">
+              <strong>결론부터 말하라</strong>
+              <p>결론을 먼저 내고, 그 결론을 지지하는 증거와 중요한 caveat, 다음 행동을 붙입니다.</p>
+              <small>불필요한 소개와 반복은 잘라내되, 근거는 남겨야 합니다.</small>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:14px;">
+            <div class="prompt">
+              <div class="label">copyable snippet</div>
+              <h3>응답 스타일 지시</h3>
+              <div class="code-shell">
+                <button class="copy-btn" type="button" data-copy-target="style-1">Copy</button>
+                <pre id="style-1">Lead with the conclusion. Include the evidence needed to support it, any material caveat, and the next action. Omit secondary detail and repetition.</pre>
+              </div>
+            </div>
+            <div class="prompt">
+              <div class="label">copyable snippet</div>
+              <h3>불필요한 장식 제거</h3>
+              <div class="code-shell">
+                <button class="copy-btn" type="button" data-copy-target="style-2">Copy</button>
+                <pre id="style-2">Be direct and tactful. Acknowledge friction specifically when relevant. Avoid canned reassurance and unnecessary sign-offs.</pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="features">
+          <h2>5. 새 기능과 활용 포인트</h2>
+          <div class="artifact-grid">
+            <div class="artifact">
+              <div class="kicker">ptc</div>
+              <h3>Programmatic Tool Calling</h3>
+              <p>모델이 JS 코드로 여러 도구를 엮어 중간 결과를 처리하는 방식입니다.</p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">multi-agent</div>
+              <h3>서브에이전트 병렬화</h3>
+              <p>독립 작업을 나누면 시간 단축과 성능 향상에 도움이 됩니다.</p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">prompt caching</div>
+              <h3>명시적 프롬프트 캐싱</h3>
+              <p>재사용 prefix를 직접 지정해 비용과 속도를 조정할 수 있습니다.</p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">persisted reasoning</div>
+              <h3>추론 유지</h3>
+              <p>이전 턴의 추론 항목을 다음 턴에서 재사용해 멀티턴 효율을 높입니다.</p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">max / pro</div>
+              <h3>더 깊은 추론</h3>
+              <p>max와 pro는 품질이 더 중요할 때 쓰는 선택지로 읽으면 됩니다.</p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">intent</div>
+              <h3>의도 이해</h3>
+              <p>모든 단계를 다 적지 않아도 되지만 중요한 제약은 여전히 써야 합니다.</p>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:14px;">
+            <div class="prompt">
+              <div class="label">copyable snippet</div>
+              <h3>작업 지시 방식</h3>
+              <div class="code-shell">
+                <button class="copy-btn" type="button" data-copy-target="style-3">Copy</button>
+                <pre id="style-3">For requests to answer, explain, review, diagnose, or plan, inspect the relevant materials and report the result. Do not implement changes unless the request also asks for them.
+For requests to change, build, or fix, make the requested in-scope local changes and run relevant non-destructive validation without asking first.</pre>
+              </div>
+            </div>
+            <div class="prompt">
+              <div class="label">copyable snippet</div>
+              <h3>프로 모드 선택 기준</h3>
+              <div class="code-shell">
+                <button class="copy-btn" type="button" data-copy-target="style-4">Copy</button>
+                <pre id="style-4">Use Pro mode when quality matters more than latency or token cost.
+Use lower effort or shorter paths when the task is simple and the baseline quality is already good.</pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="workflow">
+          <h2>6. 작업 기준으로 프롬프트하기</h2>
+          <div class="flow">
+            <div class="flow-step">
+              <strong>1. 작업 정의</strong>
+              <span>모드가 아니라 무엇을 하게 할지를 먼저 적습니다.</span>
+            </div>
+            <div class="flow-step">
+              <strong>2. 필요한 재료만 제공</strong>
+              <span>결론, 증거, 제약, 다음 행동에 필요한 정보만 남깁니다.</span>
+            </div>
+            <div class="flow-step">
+              <strong>3. 결과 검증</strong>
+              <span>호출 수가 줄었는지보다 품질이 유지되는지 먼저 봅니다.</span>
+            </div>
+            <div class="flow-step">
+              <strong>4. 재조정</strong>
+              <span>품질이 안 맞으면 prompt / reasoning / cache / mode를 다시 튜닝합니다.</span>
+            </div>
+          </div>
+          <details style="margin-top:14px;">
+            <summary>원문에서 강조한 실무 포인트</summary>
+            <ul>
+              <li>호출, 턴, 중간 출력이 줄어드는 것은 품질이 유지될 때만 의미가 있습니다.</li>
+              <li>모드명을 외우는 것보다 작업의 구조를 적는 것이 더 중요합니다.</li>
+              <li>중요한 제약 조건, 승인 경계, 성공 기준은 생략하지 않아야 합니다.</li>
+            </ul>
+          </details>
+        </section>
+
+        <section class="section" id="checklist">
+          <h2>7. 바로 적용할 체크리스트</h2>
+          <div class="grid-2">
+            <div class="summary-box">
+              <div class="kicker">migration</div>
+              <h3>마이그레이션 확인</h3>
+              <ul>
+                <li>대표 작업 3개를 고른다</li>
+                <li>이전 모델과 GPT-5.6을 비교한다</li>
+                <li>프롬프트 길이와 추론 강도를 함께 조정한다</li>
+              </ul>
+            </div>
+            <div class="summary-box">
+              <div class="kicker">prompt</div>
+              <h3>프롬프트 정리</h3>
+              <ul>
+                <li>결론을 먼저 쓰게 한다</li>
+                <li>중복 안내를 제거한다</li>
+                <li>필요한 caveat와 다음 행동을 남긴다</li>
+              </ul>
+            </div>
+            <div class="summary-box">
+              <div class="kicker">mode</div>
+              <h3>모드 선택</h3>
+              <ul>
+                <li>복잡한 작업은 pro 또는 높은 추론</li>
+                <li>대량 작업은 효율 중심</li>
+                <li>응답 품질이 기준이다</li>
+              </ul>
+            </div>
+            <div class="summary-box">
+              <div class="kicker">safety</div>
+              <h3>검증 기준</h3>
+              <ul>
+                <li>평가 없이 모드만 바꾸지 않는다</li>
+                <li>중요 제약은 명시한다</li>
+                <li>작업별로 결과 품질을 확인한다</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:14px;">
+            <strong>Done when</strong>
+            <p>
+              대표 작업에서 이전 모델과 GPT-5.6을 비교했고, 프롬프트·추론 강도·캐싱·모드에 대한 재조정이 문서로 남아 있으면 적용 단계가 끝납니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>8. 출처와 메모</h2>
+          <div class="note">
+            <p>이 페이지는 공유 링크에서 확인된 제목, 요약, 핵심 인용, 코드 블록, 섹션 구조를 바탕으로 정리한 reading edition입니다.</p>
+          </div>
+          <div class="references" style="margin-top:14px;">
+            <div class="artifact">
+              <div class="kicker">source</div>
+              <p><a href="https://share.google/ptNsFkwVjfHUYV26C">https://share.google/ptNsFkwVjfHUYV26C</a></p>
+            </div>
+            <div class="artifact">
+              <div class="kicker">related docs</div>
+              <p><a href="https://developers.openai.com/api/docs/guides/tools-programmatic-tool-calling">Programmatic Tool Calling</a></p>
+              <p><a href="https://developers.openai.com/api/docs/guides/prompt-caching">Prompt Caching</a></p>
+              <p><a href="https://developers.openai.com/api/docs/guides/reasoning#preserve-reasoning-across-calls">Reasoning preserve across calls</a></p>
+            </div>
+          </div>
+        </section>
+
+        <div class="bottom-home"><a class="home-btn" href="../index.html">HOME</a></div>
+      </main>
+    </div>
+
+    <footer>OpenAI GPT-5.6 official guide — reading edition</footer>
+  </div>
+
+  <script>
+    (function () {
+      const body = document.body;
+      const tabs = Array.from(document.querySelectorAll('.tab-btn'));
+      const density = document.getElementById('density');
+      const densityLabel = document.getElementById('density-label');
+      const labels = ['skim', 'focused', 'full'];
+      const copyBtns = Array.from(document.querySelectorAll('.copy-btn'));
+
+      function setDensity(value) {
+        body.dataset.density = String(value);
+        densityLabel.textContent = labels[value] || 'full';
+      }
+
+      density.addEventListener('input', () => setDensity(density.value));
+      setDensity(density.value);
+
+      tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const focus = btn.dataset.focus || 'all';
+          body.dataset.focus = focus;
+          tabs.forEach(t => t.classList.toggle('active', t === btn));
+        });
+      });
+
+      copyBtns.forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.copyTarget;
+          const el = document.getElementById(id);
+          if (!el) return;
+          const text = el.innerText.trim();
+          try {
+            await navigator.clipboard.writeText(text);
+            const prev = btn.textContent;
+            btn.textContent = 'Copied';
+            setTimeout(() => { btn.textContent = prev; }, 900);
+          } catch (err) {
+            console.error(err);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
