@@ -509,28 +509,26 @@
     <header>
       <div class="eyebrow">
         <span class="badge">PDF → HTML</span>
-        <span class="badge">학습자용 재편</span>
+
         <span class="badge">38 page white paper</span>
         <span class="badge">Spec-Driven Production</span>
       </div>
       <h1>Day 5 White Paper<br />Spec-Driven Production 가이드</h1>
       <p>
-        <code class="inline">Day5-spec-driven-production.pdf</code>를 원문 목차의 흐름을 유지하되,
-        학습자가 읽기 쉬운 순서로 다시 엮은 HTML입니다. 개념, 실행, 팀 운영, 안전망을 한 페이지에서
-        빠르게 훑고, 필요하면 바로 코드 예시를 복사해 실습할 수 있게 만들었습니다.
+        <code class="inline">Day5-spec-driven-production.pdf</code>의 목차를 바탕으로 정리한 HTML입니다.
       </p>
       <div class="mini-summary">
         <div class="mini-card">
-          <strong>핵심 메시지</strong>
-          <span>속도는 AI가 올렸지만, 검토·통합·안전은 사람과 시스템이 맡아야 합니다.</span>
+          <strong>명세</strong>
+          <span>Spec-Driven Development</span>
         </div>
         <div class="mini-card">
-          <strong>학습 구조</strong>
-          <span>개념 → 명세 → 프롬프트 → MCP → 팀 문화 → 안전망 순서로 재배치했습니다.</span>
+          <strong>실행</strong>
+          <span>프롬프트 · MCP</span>
         </div>
         <div class="mini-card">
-          <strong>읽기 방식</strong>
-          <span>상단 탭과 깊이 슬라이더로 요약/학습/실습 모드를 오가며 볼 수 있습니다.</span>
+          <strong>안전</strong>
+          <span>리뷰 · 정책 · 샌드박스</span>
         </div>
       </div>
     </header>
@@ -566,24 +564,19 @@
           <div>
             <h2>1. 왜 이 글을 다시 짰나</h2>
             <p>
-              이 백서는 <strong>AI가 코드를 빨리 만드는 시대</strong>에, 무엇이 병목이 되었고
-              어떤 구조를 갖춰야 생산 단계로 갈 수 있는지 설명합니다. 학습자 관점에서는 원문 순서보다
-              <strong>개념 → 명세 → 실행 방식 → 협업 → 안전망</strong>의 흐름이 더 잘 읽힙니다.
+              이 PDF는 <strong>명세</strong>, <strong>프롬프트</strong>, <strong>MCP</strong>, <strong>팀 운영</strong>, <strong>안전망</strong>을 다룹니다.
             </p>
             <div class="pill-row">
-              <span class="pill">Vibe coding ≠ production</span>
-              <span class="pill">Spec is source of truth</span>
-              <span class="pill">Human review shifts downstream</span>
-              <span class="pill">Guardrails are mandatory</span>
+              <span class="pill">명세</span>
+              <span class="pill">프롬프트</span>
+              <span class="pill">MCP</span>
+              <span class="pill">팀 운영</span>
+              <span class="pill">안전망</span>
             </div>
           </div>
           <div class="quote">
-            <strong>한 줄 해석</strong>
-            <p>
-              AI가 구현 속도를 올려도, 품질과 안전은 자동으로 따라오지 않습니다.
-              그래서 백서는 명세, 평가, 정책, 샌드박스, 팀 프로세스를 함께 다룹니다.
-            </p>
-            <small>원문 범위: Introduction ~ Summary, p. 5–36</small>
+            <strong>핵심 범위</strong>
+            <p>명세 · 프롬프트 · MCP · 팀 운영 · 안전망</p>
           </div>
         </section>
 
@@ -636,7 +629,7 @@
 
         <section class="section group-badge group-concept" id="sdd">
           <h2>2. Spec-Driven Development</h2>
-          <div class="section-note">원문: Introduction, Spec-Driven Development, A good specification, Which format to use?, Behavior Driven</div>
+
           <div class="grid-2">
             <div class="card">
               <div class="kicker">why now</div>
@@ -703,7 +696,7 @@
 
         <section class="section group-badge group-workflow" id="instructions">
           <h2>3. 지침은 어디에 두나</h2>
-          <div class="section-note">원문: Where do the instructions live?, Different Prompts for Different Use Cases</div>
+
           <div class="data-table">
             <div class="table-wrap">
               <table>
@@ -793,26 +786,21 @@
             </div>
           </div>
 
-          <div class="split-note" style="margin-top:14px;">
+          <div class="grid-2" style="margin-top:14px;">
             <div class="note">
-              <div class="kicker">Prompting principle</div>
-              <p>
-                프롬프트는 “무엇을 만들까”보다 “어떤 제약 안에서 만들까”를 먼저 적을수록 강해집니다.
-                같은 에이전트라도 프로젝트 생성, 기능 생성, 버그 수정에서 역할이 달라집니다.
-              </p>
+              <div class="kicker">prompting principle</div>
+              <p>프롬프트는 제약을 먼저 적을수록 강해집니다.</p>
             </div>
             <div class="note">
-              <div class="kicker">detail</div>
-              <p>
-                원문은 버전 번호, 디버깅 재현 절차, 차이점(diff) 확인, 브라우저 기반 E2E 점검을 반복해서 강조합니다.
-              </p>
+              <div class="kicker">use cases</div>
+              <p>프로젝트 생성, 기능 생성, 버그 수정은 서로 다른 프롬프트가 필요합니다.</p>
             </div>
           </div>
         </section>
 
         <section class="section group-badge group-workflow" id="mcp">
           <h2>5. MCP: 하나의 통합, 모든 프레임워크</h2>
-          <div class="section-note">원문: MCP: One Integration, Every Framework, Building an MCP Server, Connecting an MCP Client</div>
+
           <div class="grid-2">
             <div class="card">
               <div class="kicker">concept</div>
@@ -879,7 +867,7 @@ async with stdio_client(server_params) as (read, write):
 
         <section class="section group-badge group-team" id="team">
           <h2>6. 팀 문화와 코드 리뷰</h2>
-          <div class="section-note">원문: Team Culture & Process Evolution, Code Reviews, Sustainability</div>
+
           <div class="grid-3">
             <div class="artifact group-team">
               <div class="kicker">problem</div>
@@ -921,7 +909,7 @@ async with stdio_client(server_params) as (read, write):
 
         <section class="section group-badge group-safety" id="safety">
           <h2>7. 제로 트러스트 개발: 안전망 구축</h2>
-          <div class="section-note">원문: Zero-Trust Development, Implementing Guardrails, Sandboxing, Human-in-the-Loop, AI Generated Test Coverage, Evaluation, Policy Server, Context Hygiene & Prompt Sanitization</div>
+
           <div class="grid-2">
             <div class="callout group-safety">
               <strong>핵심 결론</strong>
@@ -1013,12 +1001,11 @@ roles:
           <h2>8. 요약과 다음 행동</h2>
           <div class="grid-2">
             <div class="card">
-              <div class="kicker">summary</div>
-              <h3>이 백서의 한 문장 요약</h3>
-              <p>
-                AI가 코드를 빠르게 만들수록, 사람은 명세와 리뷰와 정책과 팀 운영을 설계하는 쪽으로 이동해야 합니다.
-              </p>
-              <p class="detail-1">즉, 생산성의 병목은 “코드를 쓰는 손”에서 “시스템을 다루는 머리”로 옮겨갔습니다.</p>
+              <div class="quote">
+                <strong>한 줄 해석</strong>
+                <p>AI가 코드를 빠르게 만들어도, 검토·통합·안전은 자동으로 해결되지 않습니다.</p>
+                <small>원문 범위: Introduction ~ Summary, p. 5–36</small>
+              </div>
             </div>
             <div class="card">
               <div class="kicker">next action</div>
@@ -1032,26 +1019,13 @@ roles:
             </div>
           </div>
 
-          <details class="detail-2" style="margin-top:14px;">
-            <summary>원문 목차와의 대응</summary>
-            <p>
-              Introduction → SDD → 좋은 명세 → 형식 선택 → BDD → 지침 위치 → 용도별 프롬프트 → MCP → 팀 문화 →
-              코드 리뷰 → 지속 가능성 → 제로 트러스트 → 가드레일 → 샌드박스 → HITL → 테스트 → 평가 → 정책 서버 → 컨텍스트 정화 → 요약.
-            </p>
-          </details>
+
         </section>
 
         <section class="section sources group-badge group-summary" id="sources">
           <h2>출처와 메모</h2>
           <div class="note">
-            <p>
-              원문 파일: <code class="inline">Day5-spec-driven-production.pdf</code><br />
-              본 페이지는 학습용으로 재구성한 HTML이며, 원문 전체를 그대로 옮기기보다
-              구조를 재배열해 이해 순서를 앞에 둔 버전입니다.
-            </p>
-            <p>
-              참고 링크는 원문 PDF의 Endnotes에 기반한 공개 URL만 남겼습니다.
-            </p>
+            <p>공개 링크만 남겼습니다.</p>
           </div>
           <div class="grid-2 sources" style="margin-top:14px;">
             <div class="artifact">
