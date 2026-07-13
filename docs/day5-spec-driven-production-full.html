@@ -324,6 +324,7 @@
       <a href="#team">Team</a>
       <a href="#safety">Safety net</a>
       <a href="#summary">Summary</a>
+      <a href="#checklist">1-page checklist</a>
     </nav>
 
     <div class="layout">
@@ -340,6 +341,7 @@
           <a href="#reviews">8. Code Reviews / Sustainability</a>
           <a href="#safety">9. Zero-Trust Development: Building the Safety Net</a>
           <a href="#summary">10. Summary</a>
+          <a href="#checklist">11. 1페이지 실행 체크리스트</a>
         </nav>
       </aside>
 
@@ -757,6 +759,36 @@ roles:
             <summary>Endnotes and references</summary>
             <p>Public links used in the paper’s endnotes remain listed in the source PDF; this page keeps the reading experience focused on the argument itself.</p>
           </details>
+        </section>
+
+        <section class="section" id="checklist">
+          <h2>11. 1페이지 실행 체크리스트</h2>
+          <div class="grid-2">
+            <div class="summary-box">
+              <div class="kicker">spec</div>
+              <h3>먼저 문서부터 고정한다</h3>
+              <ul>
+                <li>기능마다 <code>specs/feature-name.md</code> 같은 명세 파일을 둔다</li>
+                <li>요구사항, API, 데이터 구조, 에지 케이스를 한곳에 모은다</li>
+                <li>코드보다 spec이 먼저 바뀌어야 한다</li>
+              </ul>
+            </div>
+            <div class="summary-box">
+              <div class="kicker">test + guardrail</div>
+              <h3>실행 전에 안전장치를 넣는다</h3>
+              <ul>
+                <li>BDD 시나리오 3개를 먼저 쓴다: 정상, 실패, 경계</li>
+                <li>AI에게 실패 테스트나 재현 명령을 먼저 만들게 한다</li>
+                <li>샌드박스, 정책 서버, human-in-the-loop 중 최소 1개를 적용한다</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:14px;">
+            <strong>Done when</strong>
+            <p>
+              spec 1개, 시나리오 3개, 실패 테스트 1개, 그리고 승인/차단 기준이 문서와 실행 환경에 모두 남아 있으면 시작 조건은 충족됩니다.
+            </p>
+          </div>
         </section>
 
         <div class="bottom-home"><a class="home-btn" href="../index.html">HOME</a></div>
